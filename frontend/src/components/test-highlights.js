@@ -26,7 +26,7 @@ const testHighlights = {
           pageNumber: 1
         },
         comment: {
-          text: "Flow or TypeScript?",
+          text: "Flow or TypeScript? Test",
           emoji: "🔥"
         },
         id: "8245652131754351"
