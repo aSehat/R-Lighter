@@ -27,11 +27,18 @@
     "jsonwebtoken": "^8.5.1",
     "materialize-css": "^1.0.0-rc.2",
     "mongoose": "^5.9.20",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "react-materialize": "^3.9.2",
+    "react-pdf": "^5.0.0",
+    "react-pdf-highlighter": "^3.3.0",
+    "react-scripts": "^3.4.3",
     "request": "^2.88.2"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "react-app-rewired": "^2.1.6",
+    "worker-loader": "^3.0.5"
   }
 }
