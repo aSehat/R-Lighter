@@ -2,8 +2,12 @@
   "name": "MITR",
   "version": "1.0.0",
   "description": "",
+  "workspaces": [
+    "packages/*"
+  ],
   "main": "index.js",
   "scripts": {
+    "postinstall": "cd frontend && npm install",
     "start": "node server",
     "server": "nodemon server",
     "frontend": "npm start --prefix frontend",
@@ -27,11 +31,12 @@
     "jsonwebtoken": "^8.5.1",
     "materialize-css": "^1.0.0-rc.2",
     "mongoose": "^5.9.20",
-    "react-materialize": "^3.9.2",
     "request": "^2.88.2"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
-    "nodemon": "^2.0.4"
+    "lerna": "^3.22.1",
+    "nodemon": "^2.0.4",
+    "worker-loader": "^2.0.0"
   }
 }
