@@ -1,9 +1,24 @@
 import React from 'react';
 import PDFHighlights from './components/pdf-highlighter';
-
+import Nav from './components/Nav';
+import Home from'./components/Home';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 function App() {
   return (
-    <PDFHighlights/>
+    
+      
+      <Router>
+        <div className="App">
+          <Nav />
+          <Switch>
+            <Route path="/" exact component={Home} />
+            <Route path="/PDFHighlights" exact component={PDFHighlights} />
+          </Switch>
+        </div>
+      </Router>
+      
+      
+    
   );
 }
 
