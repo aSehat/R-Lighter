@@ -43,10 +43,10 @@ function Sidebar({ highlights, toggleDocument, resetHighlights }: Props) {
             }}
           >
             <div>
-              <strong>{highlight.comment.text}</strong>
-              {highlight.content.text ? (
+          <strong>{highlight.resource.type}/{highlight.resource.resourceName}</strong>
+              {highlight.resource.resourceName ? (
                 <blockquote style={{ marginTop: "0.5rem" }}>
-                  {`${highlight.content.text.slice(0, 90).trim()}…`}
+                  {`${highlight.resource.resourceName.slice(0, 90).trim()}…`}
                 </blockquote>
               ) : null}
               {highlight.content.image ? (

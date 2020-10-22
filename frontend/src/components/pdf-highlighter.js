@@ -7,15 +7,17 @@ import PDFWorker from "worker-loader!pdfjs-dist/lib/pdf.worker";
 import {
   PdfLoader,
   PdfHighlighter,
-  Tip,
   Highlight,
   Popup,
   AreaHighlight,
   setPdfWorker
 } from "react-pdf-highlighter";
 
+
 import testHighlights from "./test-highlights";
 
+
+import Tip from "./Tip";
 import Spinner from "./Spinner";
 import Sidebar from "./Sidebar";
 
@@ -31,7 +33,8 @@ type Props = {};
 
 type State = {
   url: string,
-  highlights: Array<T_Highlight>
+  highlights: Array<T_Highlight>,
+  classes: Array<{resourcetype: string}>
 };
 
 const getNextId = () => String(Math.random()).slice(2);
@@ -60,9 +63,12 @@ const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
 class PDFHighlights extends Component<Props, State> {
   state = {
     url: initialUrl,
-    highlights: testHighlights[initialUrl]
-      ? [...testHighlights[initialUrl]]
-      : []
+    highlights: [],
+    classes: [
+      {
+        resourcetype: 'Class',
+      }],
+    resources: []
   };
 
   state: State;
@@ -108,12 +114,25 @@ class PDFHighlights extends Component<Props, State> {
   }
 
   addHighlight(highlight: T_NewHighlight) {
-    const { highlights } = this.state;
+    const { highlights, classes, resources } = this.state;
 
     console.log("Saving highlight", highlight);
-
+    const id = getNextId();
+    if(highlight.resource.type == "Class"){
+      this.setState({
+        classes: [{ resourcetype: highlight.resource.resourceName},...classes]
+      })
+    }else{
+      this.setState({
+        resources: [ { 
+          resourcename: highlight.resource.resourceName, 
+          type: highlight.resource.type,
+          id: id 
+        },...resources]
+      })
+    }
     this.setState({
-      highlights: [{ ...highlight, id: getNextId() }, ...highlights]
+      highlights: [{ ...highlight, id: id }, ...highlights],
     });
   }
 
@@ -177,11 +196,15 @@ class PDFHighlights extends Component<Props, State> {
                 ) => (
                   <Tip
                     onOpen={transformSelection}
-                    onConfirm={comment => {
-                      this.addHighlight({ content, position, comment });
+                    content={content}
+                    onConfirm={resource => {
+                      console.log(resource);
+                      this.addHighlight({ content, position, resource });
 
                       hideTipAndSelection();
                     }}
+                    classes={this.state.classes}
+                    resources={this.state.resources}
                   />
                 )}
                 highlightTransform={(
@@ -193,6 +216,7 @@ class PDFHighlights extends Component<Props, State> {
                   screenshot,
                   isScrolledTo
                 ) => {
+                  console.log(highlight);
                   const isTextHighlight = !Boolean(
                     highlight.content && highlight.content.image
                   );
@@ -201,7 +225,7 @@ class PDFHighlights extends Component<Props, State> {
                     <Highlight
                       isScrolledTo={isScrolledTo}
                       position={highlight.position}
-                      comment={highlight.comment}
+                      comment={highlight.resource}
                     />
                   ) : (
                     <AreaHighlight
