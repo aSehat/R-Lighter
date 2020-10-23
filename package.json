@@ -31,7 +31,8 @@
     "jsonwebtoken": "^8.5.1",
     "materialize-css": "^1.0.0-rc.2",
     "mongoose": "^5.9.20",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "styled-components": "^5.2.0"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",

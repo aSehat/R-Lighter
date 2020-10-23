@@ -8,15 +8,18 @@ import {
   Switch,
   Route
 } from "react-router-dom";
+import Nav from './components/Nav';
+import Home from'./components/Home';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 function App() {
-  return (
+  return (      
       <Router>
-        <div className="container d-flex align-items-center flex-column">
+        <div className="App">
+          <Nav />
           <Switch>
-            <Route path="/" exact={true}>
-              <Signup />
-            </Route>
+            <Route path="/" exact component={Home} />
+            <Route path="/PDFHighlights" exact component={PDFHighlights} />
           </Switch>
         </div>
         <link rel="stylesheet"
@@ -24,7 +27,7 @@ function App() {
                 integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
                 crossOrigin="anonymous"/>
       </Router>
-    //<PDFHighlights/>
+      
   );
 }
 
