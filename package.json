@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
+    "immutable": "^4.0.0-rc.12",
     "lerna": "^3.22.1",
     "nodemon": "^2.0.4",
     "worker-loader": "^2.0.0"

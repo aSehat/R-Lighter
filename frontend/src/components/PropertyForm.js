@@ -12,7 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 
 import type { T_LTWH } from "../types.js";
-
+const { getKeys } = require('../utils/utils');
 type Props = {
   position: {
     boundingRect: T_LTWH,
@@ -35,7 +35,7 @@ class PropertyForm extends Component<Props> {
     this.handleChange = this.handleChange.bind(this);
     this.changeInstantiation = this.changeInstantiation.bind(this); 
     this.state = {
-      type: "",
+      type: "Property",
       resourceName: "",
       property: {
         label: "",
@@ -47,9 +47,9 @@ class PropertyForm extends Component<Props> {
 
   changeInstantiation(inputValue){
     this.setState({
-      type: inputValue
+      resourceName: inputValue
     }, () => {
-      console.log(this.state.type);
+      console.log(this.state.resourceName);
     })
     
   }
@@ -93,12 +93,12 @@ class PropertyForm extends Component<Props> {
           <h3>Create Property</h3>
           <div className = "field">
             <Autocomplete
-            inputValue={this.state.type} 
+            inputValue={this.state.resourceName} 
             onInputChange={(_, newInputValue) => {
               this.changeInstantiation(newInputValue)}}
             id="Resource"
-            options={resources}
-            getOptionLabel={(option) => option.resourcename}
+            options={getKeys(resources)}
+            getOptionLabel={(option) => option}
             style={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="Resource Instantiation" variant="outlined" />}
             />
@@ -114,7 +114,7 @@ class PropertyForm extends Component<Props> {
               style={{ width: 300 }}
             >
               <MenuItem value={"label"}>skos:label</MenuItem>
-              <MenuItem value={"description"}>skos:description</MenuItem>
+              <MenuItem value={"description"}>skos:Description</MenuItem>
             </Select>
           </FormControl>
           <div class="field">

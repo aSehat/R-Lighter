@@ -28,13 +28,16 @@ import type {
 
 import "./style/App.css";
 setPdfWorker(PDFWorker);
+const { returnTrimmedProperty } = require('../utils/utils');
 
 type Props = {};
 
 type State = {
   url: string,
   highlights: Array<T_Highlight>,
-  classes: Array<{resourcetype: string}>
+  classes: {name: {annotationid: string, id: string, name: string, property: {label: string, description: string}, resources: []}},
+  resources: { name: {annotationid: string, id: string, property: {label: string, description: string}}},
+  properties: { id: {annotationid: string, name: string, resource: string}}
 };
 
 const getNextId = () => String(Math.random()).slice(2);
@@ -46,10 +49,15 @@ const resetHash = () => {
   document.location.hash = "";
 };
 
-const HighlightPopup = ({ comment }) =>
-  comment.text ? (
+const HighlightPopup = ({ highlight }) =>
+  highlight ? (
     <div className="Highlight__popup">
-      {comment.emoji} {comment.text}
+      <h4>Resource</h4>
+      <p>{highlight.class}:{highlight.resource}</p>
+      <h4>Property</h4>
+      <p>
+        skos:{highlight.property}#{returnTrimmedProperty(highlight.content.text)}
+      </p>
     </div>
   ) : null;
 
@@ -64,11 +72,15 @@ class PDFHighlights extends Component<Props, State> {
   state = {
     url: initialUrl,
     highlights: [],
-    classes: [
-      {
-        resourcetype: 'Class',
-      }],
-    resources: []
+    classes: {
+      'Class' :{
+        annotationid: null,
+        id: null,
+        name: 'Class',
+        property: null,
+        resources: []
+      }},
+    resources: {}
   };
 
   state: State;
@@ -113,26 +125,95 @@ class PDFHighlights extends Component<Props, State> {
     return highlights.find(highlight => highlight.id === id);
   }
 
-  addHighlight(highlight: T_NewHighlight) {
-    const { highlights, classes, resources } = this.state;
+  createNewClass(highlight, annotationid){
+    const newClass = {
+      annotationid: annotationid,
+      class: highlight.resource.type,
+      name: highlight.resource.resourceName,
+      property: highlight.resource.property,
+      resources: []
+    }
+    let classes = this.state.classes;
+    classes[highlight.resource.resourceName] =  newClass;
+    this.setState({
+      classes: classes
+    }, () => {
+      console.log(this.state.classes);
+    })
+  }
 
-    console.log("Saving highlight", highlight);
-    const id = getNextId();
-    if(highlight.resource.type == "Class"){
-      this.setState({
-        classes: [{ resourcetype: highlight.resource.resourceName},...classes]
-      })
-    }else{
-      this.setState({
-        resources: [ { 
-          resourcename: highlight.resource.resourceName, 
-          type: highlight.resource.type,
-          id: id 
-        },...resources]
-      })
+  addNewPropertyToResource(highlight){
+    const resources = this.state.resources
+    for(let i = 0; i < resources.length; i++){
+      if(resources[i].name == highlight.resource.resourceName){
+        let newResource = {};
+        if (highlight.resource.property.label != ""){
+          newResource = {
+            property: {
+              label: highlight.resource.property.label,
+              description: resources[i].property.description
+            },
+            ...resources[i]
+          }
+        } else {
+          newResource = {
+            property: {
+              label: resources[i].property.label,
+              description: highlight.resource.property.description
+            },
+            ...resources[i]
+          }
+        }
+        break;
+      }
     }
     this.setState({
-      highlights: [{ ...highlight, id: id }, ...highlights],
+      resources: resources
+    });
+  }
+
+  createNewResource(highlight, annotationid){
+    const newResource = {
+      annotationid: annotationid,
+      class: highlight.resource.type,
+      name: highlight.resource.resourceName,
+      property: highlight.resource.property
+    }
+    let resources = this.state.resources;
+    resources[highlight.resource.resourceName] = newResource
+
+    let classes = this.state.classes;
+    classes[highlight.resource.type].resources.push(highlight.resource.resourceName)
+    this.setState({
+      resources: resources,
+      classes: classes
+    }, () => {
+      console.log(this.state.resources);
+    }) 
+  }
+
+
+
+  addHighlight(highlight: T_NewHighlight) {
+    const { highlights } = this.state;
+    const {content, position, resource } = highlight;
+    console.log("Saving highlight", highlight);
+    const id = getNextId();
+    let list = ""
+    if(highlight.resource.type == "Class"){
+      this.createNewClass(highlight, id)
+      list = "classes"
+    }else if(highlight.resource.type == "Property"){
+      this.addNewPropertyToResource(highlight)
+      list = "resources"
+    } else {
+      this.createNewResource(highlight, id)
+      list = "resources"
+    }
+
+    const property = (highlight.resource.property.label === "") ? "label" : "description"
+    this.setState({
+      highlights: [{ content, position, resource: resource.resourceName, class: resource.type, property: property, list: list, id: id }, ...highlights],
     });
   }
 
@@ -161,11 +242,14 @@ class PDFHighlights extends Component<Props, State> {
 
   render() {
     const { url, highlights } = this.state;
-
+    console.log(this.state.classes);
+    
     return (
       <div className="App" style={{ display: "flex", height: "100vh" }}>
         <Sidebar
           highlights={highlights}
+          resources={this.state.resources}
+          classes={this.state.classes}
           resetHighlights={this.resetHighlights}
           toggleDocument={this.toggleDocument}
         />
@@ -225,7 +309,7 @@ class PDFHighlights extends Component<Props, State> {
                     <Highlight
                       isScrolledTo={isScrolledTo}
                       position={highlight.position}
-                      comment={highlight.resource}
+                      comment={highlight.list ? this.state[highlight.list][highlight.resource]: null}
                     />
                   ) : (
                     <AreaHighlight
@@ -242,10 +326,11 @@ class PDFHighlights extends Component<Props, State> {
 
                   return (
                     <Popup
-                      popupContent={<HighlightPopup {...highlight} />}
-                      onMouseOver={popupContent =>
+                      popupContent={<HighlightPopup highlight={highlight} />}
+                      onMouseOver={popupContent => {
+                        console.log(highlight)
                         setTip(highlight, highlight => popupContent)
-                      }
+                      }}
                       onMouseOut={hideTip}
                       key={index}
                       children={component}

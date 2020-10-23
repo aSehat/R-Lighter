@@ -12,6 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 
 import type { T_LTWH } from "../types.js";
+const { getKeys } = require('../utils/utils');
 
 type Props = {
   position: {
@@ -107,8 +108,8 @@ class ResourceForm extends Component<Props> {
             onInputChange={(_, newInputValue) => {
               this.changeType(newInputValue)}}
             id="Resource"
-            options={resources}
-            getOptionLabel={(option) => option.resourcetype}
+            options={getKeys(resources)}
+            getOptionLabel={(option) => option}
             style={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="Resource Type" variant="outlined" />}
             />

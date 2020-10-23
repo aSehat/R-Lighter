@@ -13,17 +13,23 @@ const updateHash = highlight => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
-function Sidebar({ highlights, toggleDocument, resetHighlights }: Props) {
+function Sidebar({ highlights, resources, classes, toggleDocument, resetHighlights }: Props) {
+  // const highlightsWithResources = highlights.map(highlight => {
+  //   let resource;
+  //   if(highlight.list == "resources"){
+  //     resource = resources.find(item => item.name == highlight.resource)
+  //   } else {
+  //     resource = classes.find(item => item.name == highlight.resource)
+  //   }
+  //   console.log({...highlight,resource: resource})
+  //   return {...highlight,resource: resource}
+  // })
+  // console.log(highlightsWithResources);
+
   return (
     <div className="sidebar" style={{ width: "25vw" }}>
       <div className="description" style={{ padding: "1rem" }}>
-        <h2 style={{ marginBottom: "1rem" }}>react-pdf-highlighter</h2>
-
-        <p style={{ fontSize: "0.7rem" }}>
-          <a href="https://github.com/agentcooper/react-pdf-highlighter">
-            Open in GitHub
-          </a>
-        </p>
+        <h2 style={{ marginBottom: "1rem" }}>RDF Annotations</h2>
 
         <p>
           <small>
@@ -43,10 +49,10 @@ function Sidebar({ highlights, toggleDocument, resetHighlights }: Props) {
             }}
           >
             <div>
-          <strong>{highlight.resource.type}/{highlight.resource.resourceName}</strong>
-              {highlight.resource.resourceName ? (
+          <strong>{highlight.list}: {highlight.class}/{highlight.resource}</strong>
+              {highlight.resource ? (
                 <blockquote style={{ marginTop: "0.5rem" }}>
-                  {`${highlight.resource.resourceName.slice(0, 90).trim()}…`}
+                  {`${highlight.content.text.slice(0, 90).trim()}…`}
                 </blockquote>
               ) : null}
               {highlight.content.image ? (
