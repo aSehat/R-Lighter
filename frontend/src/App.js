@@ -3,11 +3,6 @@ import PDFHighlights from './components/pdf-highlighter';
 import Signup from './components/signupForm';
 import Login from './components/loginForm'
 import Header from './components/signupHeader'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from "react-router-dom";
 import Nav from './components/Nav';
 import Home from'./components/Home';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
