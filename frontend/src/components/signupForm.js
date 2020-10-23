@@ -7,11 +7,9 @@ import {axios} from 'axios';
 
 export default function Signup(props) {
     const [state , setState] = useState({
+        name: "",
         email : "",
-        password : "",
-        first_name: "",
-        last_name: "",
-        company: ""
+        password : ""
     });
 
     const handleChange = (e) => {
@@ -25,11 +23,9 @@ export default function Signup(props) {
     const sendDetailsToServer = () => {
         props.showError(null);
         const payload={
+            "name": state.name,
             "email": state.email,
-            "password": state.password,
-            "first_name": state.first_name,
-            "last_name": state.last_name,
-            "company": state.company
+            "password": state.password
         }
         const API_BASE_URL = "";
         axios.post(API_BASE_URL+'/user/register', payload)
@@ -58,7 +54,7 @@ export default function Signup(props) {
             state.company.length > 0) {
                 sendDetailsToServer()
             } else {
-                props.showError('Email, Password, First Name, Last Name, or Comapny Name not long enough')
+                props.showError('Name, Email, or Password are not long enough')
             }
         } else {
             props.showError('Passwords do not match');
@@ -70,32 +66,12 @@ export default function Signup(props) {
             <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
                 <form>
                     <div className="form-group text-left">
-                        <label htmlFor="firstName">First Name</label>
-                        <input type="firstName"
+                        <label htmlFor="name">First Name</label>
+                        <input type="name"
                                className="form-control"
-                               id="first"
-                               placeholder="Enter First Name"
-                               value={state.first_name}
-                               onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group text-left">
-                        <label htmlFor="lastName">Last Name</label>
-                        <input type="lastName"
-                               className="form-control"
-                               id="last"
-                               placeholder="Enter Last Name"
-                               value={state.first_name}
-                               onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group text-left">
-                        <label htmlFor="companyName">Company</label>
-                        <input type="companyName"
-                               className="form-control"
-                               id="company"
-                               placeholder="Enter Company Name"
-                               value={state.first_name}
+                               id="name"
+                               placeholder="Enter Name"
+                               value={state.name}
                                onChange={handleChange}
                         />
                     </div>
