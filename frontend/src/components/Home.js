@@ -12,11 +12,11 @@ const Button = styled.button`
 `
 function Home() {
   return (
-    <home>
+    <div className="main-page">
         <img src ={Logo} alt = "website logo" />
         <h3><Button>GET STARTED</Button> </h3>
         
-    </home>
+    </div>
 
   );
 }
