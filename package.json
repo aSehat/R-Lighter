@@ -29,6 +29,8 @@
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
     "jsonwebtoken": "^8.5.1",
+    "loader": "^2.1.1",
+    "loader.js": "^4.7.0",
     "materialize-css": "^1.0.0-rc.2",
     "mongoose": "^5.9.20",
     "request": "^2.88.2",
