@@ -160,7 +160,7 @@ const resources = [
     name: "kwank2",
     property: {
       label: "studentid",
-      description: "senor at RPI majoring CS and ITWS"
+      description: "senior at RPI majoring CS and ITWS"
     }
   }
 ]

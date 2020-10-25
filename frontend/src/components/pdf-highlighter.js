@@ -80,7 +80,9 @@ class PDFHighlights extends Component<Props, State> {
         property: null,
         resources: []
       }},
-    resources: {}
+    resources: { 
+      
+    }
   };
 
   state: State;
@@ -211,7 +213,7 @@ class PDFHighlights extends Component<Props, State> {
       list = "resources"
     }
 
-    const property = (highlight.resource.property.label === "") ? "label" : "description"
+    const property = (highlight.resource.property.label === "") ? "description" : "label"
     this.setState({
       highlights: [{ content, position, resource: resource.resourceName, class: resource.type, property: property, list: list, id: id }, ...highlights],
     });
