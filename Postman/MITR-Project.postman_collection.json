@@ -1,179 +1,20 @@
 {
+	"variables": [],
 	"info": {
-		"_postman_id": "e352054e-c947-47c8-98f1-73381e4c8609",
 		"name": "MITR-Project",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "a01fb8fe-0ba3-6cba-784e-c53da58a7d9f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Profile",
-			"item": [
-				{
-					"name": "Project Focused",
-					"item": [],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Get logged in users profile",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmNzkxYTI2OGVkMmZiYzBjMWU0MzM3In0sImlhdCI6MTU5MzQ1MjQ1NSwiZXhwIjoxNTkzNDU2MDU1fQ._wWzxFj9Oo1LsYUl_J2SPNzncsKlLAk2MEmRdaNYv5Y",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/profile/me",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"profile",
-								"me"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create/Update Profile",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYwYTYyNjQwNDdkNWJiZGY3NTE0MWY2In0sImlhdCI6MTU5NDUyODE1NiwiZXhwIjoxNTk0NTMxNzU2fQ.FH9FDs7AEFBk-eKBA6qIs4S1aueIPrTd4I_0KAu47i0",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"bio\": \"I'm a student\",\r\n    \"company\": \"RPI\",\r\n    \"location\": \"New York\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/profile",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"profile"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Profiles",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/profile/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"profile",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get specific Profile",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/profile/user/5ef791a268ed2fbc0c1e4337",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"profile",
-								"user",
-								"5ef791a268ed2fbc0c1e4337"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Profile",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "x-auth-token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmYWI3OTkzNjFjNjNjNzdkNjVhOTBkIn0sImlhdCI6MTU5MzQ4OTMwNiwiZXhwIjoxNTkzNDkyOTA2fQ.zqD2X8KVJQrI-6Y8fpFICODGps8MjdnaMuUyDdOIs-Q",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:5000/api/profile/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"profile",
-								""
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
 			"name": "Auth",
+			"description": "",
 			"item": [
 				{
 					"name": "Register User",
 					"request": {
+						"url": "localhost:5000/api/users",
 						"method": "POST",
 						"header": [
 							{
@@ -184,61 +25,30 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"iLikeAndReviewThings\",\r\n    \"email\": \"likey@gmail.com\",\r\n    \"password\": \"123456789\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\r\n    \"name\": \"iLikeAndReviewThings\",\r\n    \"email\": \"likey@gmail.com\",\r\n    \"password\": \"123456789\"\r\n}"
 						},
-						"url": {
-							"raw": "localhost:5000/api/users",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"users"
-							]
-						}
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "Login User",
 					"request": {
+						"url": "localhost:5000/api/auth",
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"me@gmail.com\",\r\n    \"password\": \"123456789\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\r\n    \"email\": \"me@gmail.com\",\r\n    \"password\": \"123456789\"\r\n}"
 						},
-						"url": {
-							"raw": "localhost:5000/api/auth",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"auth"
-							]
-						}
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "Authorized User Info",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
+						"url": "localhost:5000/api/auth",
 						"method": "GET",
 						"header": [
 							{
@@ -249,30 +59,145 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": ""
 						},
-						"url": {
-							"raw": "localhost:5000/api/auth",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"auth"
-							]
-						}
+						"description": ""
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
+		},
+		{
+			"name": "Project",
+			"description": "",
+			"item": [
+				{
+					"name": "Create PDF Project",
+					"request": {
+						"url": "localhost:5000/api/project",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwMzY2MjY4NSwiZXhwIjoxNjAzNjY2Mjg1fQ.neMGwmqnm9hxBn8vj8QlRXGd0AxpEfvtC5YDW7Gjn1U",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Project A\",\n\t\"link\": \"https://arxiv.org/pdf/1708.08021.pdf\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create Annotation(s)",
+					"request": {
+						"url": "localhost:5000/api/annotation",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwMzY3MTU3NywiZXhwIjoxNjAzNjc1MTc3fQ.GdPwKJ5V1RGFfVMcOlXWxc0PTJqvJJuSJ25nNe9Sj1Q",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\n\t\"highlight\": {\n\t\t\"content\": \"test\"\n\t},\n\t\"position\": {\n\t\t\"boundingRect\": {\n\t\t\t\"x1\": 0,\n\t\t\t\"y1\": 0,\n\t\t\t\"x2\": 1,\n\t\t\t\"y2\": 1,\n\t\t\t\"width\": 1,\n\t\t\t\"height\": 1\n\t\t},\n\t\t\"rect\": [{\n\t\t\t\"x1\": 0,\n\t\t\t\"y1\": 0,\n\t\t\t\"x2\": 1,\n\t\t\t\"y2\": 1,\n\t\t\t\"width\": 1,\n\t\t\t\"height\": 1\n\t\t}],\n\t\t\"pageNumber\": 1\n\t},\n\t\"resource\": {\n\t\t\"type\": \"Student\",\n\t\t\"resourceName\": \"kwank2\",\n\t\t\"property\": {\n\t\t\t\"label\": \"label\",\n\t\t\t\"value\": \"test\"\n\t\t}\n\t}\n},\n{\n\t\"highlight\": {\n\t\t\"content\": \"test\"\n\t},\n\t\"position\": {\n\t\t\"boundingRect\": {\n\t\t\t\"x1\": 0,\n\t\t\t\"y1\": 0,\n\t\t\t\"x2\": 1,\n\t\t\t\"y2\": 1,\n\t\t\t\"width\": 1,\n\t\t\t\"height\": 1\n\t\t},\n\t\t\"rect\": [{\n\t\t\t\"x1\": 0,\n\t\t\t\"y1\": 0,\n\t\t\t\"x2\": 1,\n\t\t\t\"y2\": 1,\n\t\t\t\"width\": 1,\n\t\t\t\"height\": 1\n\t\t}],\n\t\t\"pageNumber\": 1\n\t},\n\t\"resource\": {\n\t\t\"type\": \"Student\",\n\t\t\"resourceName\": \"kwank3\",\n\t\t\"property\": {\n\t\t\t\"label\": \"label\",\n\t\t\t\"value\": \"123\"\n\t\t}\n\t}\n}\n]"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Annotations(s)",
+					"request": {
+						"url": "localhost:5000/api/annotation",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwMzY3MTU3NywiZXhwIjoxNjAzNjc1MTc3fQ.GdPwKJ5V1RGFfVMcOlXWxc0PTJqvJJuSJ25nNe9Sj1Q",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"5f961e1e2b89bb042ed0688e\", \"5f961e1e2b89bb042ed0688f\", \"5f961e4f2b89bb042ed06890\", \"5f961e4f2b89bb042ed06891\"]"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project By Project ID ",
+					"request": {
+						"url": "localhost:5000/api/project/5f95fd7fd41cb80254bea91e",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwMzY3MTU3NywiZXhwIjoxNjAzNjc1MTc3fQ.GdPwKJ5V1RGFfVMcOlXWxc0PTJqvJJuSJ25nNe9Sj1Q",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Project ",
+					"request": {
+						"url": "localhost:5000/api/project/5f95fd7fd41cb80254bea91e",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwMzY3MTU3NywiZXhwIjoxNjAzNjc1MTc3fQ.GdPwKJ5V1RGFfVMcOlXWxc0PTJqvJJuSJ25nNe9Sj1Q",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Projects",
+					"request": {
+						"url": "localhost:5000/api/project",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwMzY3MTU3NywiZXhwIjoxNjAzNjc1MTc3fQ.GdPwKJ5V1RGFfVMcOlXWxc0PTJqvJJuSJ25nNe9Sj1Q",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
