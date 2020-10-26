@@ -4,6 +4,7 @@ import Signup from './components/signupForm';
 import Login from './components/loginForm'
 import Nav from './components/Nav';
 import Home from'./components/Home';
+import Dashboard from './components/Dashboard';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 function App() {
@@ -16,10 +17,11 @@ function App() {
             <Route path="/PDFHighlights" exact component={PDFHighlights} />
               <Route path="/Login" exact component={Login} />
             <Route path="/Signup" exact component={Signup} />
+            <Route path="/Dashboard" exact component={Dashboard} />
           </Switch>
         </div>
       </Router>
-      
+
   );
 }
 
