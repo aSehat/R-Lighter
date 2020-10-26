@@ -7,11 +7,12 @@ connectDB();
 
 app.get('/', (req, res) => res.send('API Running'));
 
-app.use(express.json({extended: false}));
+app.use(express.json({extended: false}));   
 
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/project', require('./routes/api/project'));
+app.use('/api/annotation', require('./routes/api/annotation'));
 
 const PORT = process.env.PORT || 5000;
 
