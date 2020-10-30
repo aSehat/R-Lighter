@@ -68,10 +68,6 @@ const AnnotationSchema = new mongoose.Schema({
             value: {
                 type: String
             }
-        },
-        resourceid: {
-            type: Schema.Types.ObjectId,
-            ref: 'resource'
         }
     },
     date: {
