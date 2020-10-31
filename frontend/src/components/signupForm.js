@@ -1,7 +1,7 @@
 // User registration form
 import React, {useState} from 'react';
 import "./style/loginSignup.css";
-import {axios} from 'axios';
+import axios from 'axios';
 
 
 export default function Signup(props) {
@@ -27,8 +27,8 @@ export default function Signup(props) {
             "email": state.email,
             "password": state.password
         }
-        const API_BASE_URL = "";
-        axios.post(API_BASE_URL+'/', payload)
+        const API_BASE_URL = "http://localhost:5000/api";
+        axios.post(API_BASE_URL+'/users', payload)
             .then(function (response) {
                 if(response.status === 200){
                     setState(prevState => ({
