@@ -147,9 +147,9 @@ class PDFHighlights extends Component<Props, State> {
   addNewPropertyToResource(highlight){
     const resources = this.state.resources
     for(let i = 0; i < resources.length; i++){
-      if(resources[i].name == highlight.resource.resourceName){
+      if(resources[i].name === highlight.resource.resourceName){
         let newResource = {};
-        if (highlight.resource.property.label != ""){
+        if (highlight.resource.property.label !== ""){
           newResource = {
             property: {
               label: highlight.resource.property.label,
@@ -202,10 +202,10 @@ class PDFHighlights extends Component<Props, State> {
     console.log("Saving highlight", highlight);
     const id = getNextId();
     let list = ""
-    if(highlight.resource.type == "Class"){
+    if(highlight.resource.type === "Class"){
       this.createNewClass(highlight, id)
       list = "classes"
-    }else if(highlight.resource.type == "Property"){
+    }else if(highlight.resource.type === "Property"){
       this.addNewPropertyToResource(highlight)
       list = "resources"
     } else {

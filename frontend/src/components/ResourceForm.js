@@ -64,7 +64,7 @@ class ResourceForm extends Component<Props> {
 
   handleChange(event){
     const propertyVal = event.target.value;
-    if(propertyVal == "label"){
+    if(propertyVal === "label"){
       this.setState({
         propertyType: propertyVal,
         property: {
