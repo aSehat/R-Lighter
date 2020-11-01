@@ -2,23 +2,20 @@ const Resource = require('../../models/Resource');
 
 const createResources = async (annotations) => {
     try {
-        const NewResources = await annotations.map( async (annotation) => {
-            // console.log("annotation resource:", annotation.resource);
+        const NewResources = await Promise.all(annotations.map( async (annotation) => {
             let newResource = {};
-            const content = annotation.highlight.content;
+            const content = annotation.highlight.content.text;
             const {type, resourceName, property} = annotation.resource;
-            console.log(annotation);
             newResource.class = type;
             newResource.name = resourceName;
             newResource.property = {}
             newResource.property[property.label] = content;
             newResource.annotationId = annotation._id;
-            console.log(newResource)
+
             try{
                 const resource = await Resource.findOne({name: resourceName});
                 let newResourceContent;
                 if (!resource) {
-                    console.log("making new Resource");
                     instanResource = new Resource(newResource);
                     newResourceContent = await instanResource.save();
                 } else {
@@ -34,6 +31,14 @@ const createResources = async (annotations) => {
                         $set: {property: newProperty}
                     }, {new: true});    
                 }
+                if(type != 'Class'){
+                    await Resource.findOneAndUpdate({
+                        name: type
+                    }, {
+                        $push: {resources: newResourceContent._id}
+                    });
+                    
+                } 
                 return new Promise((resolve, _) => {
                     resolve(newResourceContent);
                 })
@@ -43,7 +48,7 @@ const createResources = async (annotations) => {
                     reject(err.message);
                 });
             }
-        });
+        }));
         return new Promise((resolve, _) => resolve(NewResources));
     } catch (err) {
         console.error(err.message);

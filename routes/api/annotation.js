@@ -21,9 +21,9 @@ router.post('/', auth, async (req, res) => {
 
     try {
         const annotations = await Annotation.collection.insertMany(new_annotations); 
-        const resources = await createResources(annotations.ops);
-        console.log(resources);        
-        res.json(annotations);
+        const resources = await createResources(annotations.ops); 
+        console.log(resources);      
+        res.json({annotations, resources});
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

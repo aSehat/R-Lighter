@@ -4,7 +4,9 @@ const Schema = mongoose.Schema;
 const AnnotationSchema = new mongoose.Schema({
     highlight: {
         content: {
-            type: String
+            text: {
+                type: String
+            }
         },
         position: {
             boundingRect: {
