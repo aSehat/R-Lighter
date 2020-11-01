@@ -6,7 +6,9 @@ const Annotation = require('../../models/Annotation');
 const Project = require('../../models/Project');
 const Resource = require('../../models/Resource');
 const {createResources} = require('../utils/resources');
+const {updateProjectResourcesAnnotations} = require('../utils/project');
 var ObjectId = require('mongodb').ObjectID;
+
 
 // @route       POST api/annotation
 // @desc        update annotations
@@ -17,11 +19,16 @@ router.post('/', auth, async (req, res) => {
         return res.status(400).json({errors: errors.array()});
     }
 
-    const new_annotations = req.body;
+    const new_annotations = req.body.annotations;
+    const project_id = req.body.project_id;
+    console.log(new_annotations);
+    console.log(project_id);
 
     try {
-        const annotations = await Annotation.collection.insertMany(new_annotations); 
+        const annotations = await Annotation.collection.insertMany(new_annotations);
         const resources = await createResources(annotations.ops); 
+        updateProjectResourcesAnnotations(project_id, annotations.ops, resources);        
+
         console.log(resources);      
         res.json({annotations, resources});
     } catch (err) {

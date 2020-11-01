@@ -35,7 +35,7 @@ const createResources = async (annotations) => {
                     await Resource.findOneAndUpdate({
                         name: type
                     }, {
-                        $push: {resources: newResourceContent._id}
+                        $addToSet: {resources: [newResourceContent._id]}
                     });
                     
                 } 

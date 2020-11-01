@@ -26,6 +26,12 @@ const ProjectSchema = new mongoose.Schema({
             ref: 'annotation'
         }
     ],
+    resources: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'resource'
+        }
+    ],
     language: {
         type: String,
         default: 'EN'

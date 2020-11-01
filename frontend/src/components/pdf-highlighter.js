@@ -3,6 +3,8 @@
 
 import React, { Component } from "react";
 import PDFWorker from "worker-loader!pdfjs-dist/lib/pdf.worker";
+import Button from "@material-ui/core/Button";
+import axios from 'axios';
 
 import {
   PdfLoader,
@@ -70,7 +72,10 @@ const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
 
 class PDFHighlights extends Component<Props, State> {
   state = {
+    projectId: "5f9608c9ea99c8030d4cf3f1",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDI1OTY0MSwiZXhwIjoxNjA0MjYzMjQxfQ.5qDothT1zeRD-tzUQ8IqOGNJG-N0sh4jTXQN6EULAgM",
     url: initialUrl,
+    newHighlights: [],
     highlights: [],
     classes: {
       'Class' :{
@@ -112,6 +117,14 @@ class PDFHighlights extends Component<Props, State> {
       this.scrollViewerTo(highlight);
     }
   };
+
+  save = () => {
+    console.log(this.state.newHighlights);
+    let headers = {
+      'x-auth-token': this.state.token 
+    };
+    axios.post('http://localhost:5000/api/annotation', {project_id: this.state.projectId, annotations: this.state.newHighlights}, {headers: headers}).then(res => console.log(res.data));
+  }
 
   componentDidMount() {
     window.addEventListener(
@@ -197,7 +210,7 @@ class PDFHighlights extends Component<Props, State> {
 
 
   addHighlight(highlight: T_NewHighlight) {
-    const { highlights } = this.state;
+    const { highlights, newHighlights } = this.state;
     const {content, position, resource } = highlight;
     console.log("Saving highlight", highlight);
     const id = getNextId();
@@ -212,9 +225,9 @@ class PDFHighlights extends Component<Props, State> {
       this.createNewResource(highlight, id)
       list = "resources"
     }
-
     const property = (highlight.resource.property.label === "") ? "description" : "label"
     this.setState({
+      newHighlights: [{highlight: { content, position}, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id }, ...newHighlights],
       highlights: [{ content, position, resource: resource.resourceName, class: resource.type, property: property, list: list, id: id }, ...highlights],
     });
   }
@@ -262,6 +275,7 @@ class PDFHighlights extends Component<Props, State> {
             position: "relative"
           }}
         >
+          <Button onClick={() => this.save()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Save</Button>
           <PdfLoader url={url} beforeLoad={<Spinner />}>
             {pdfDocument => (
               <PdfHighlighter
