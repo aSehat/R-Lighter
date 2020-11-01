@@ -65,9 +65,6 @@ const AnnotationSchema = new mongoose.Schema({
             label: {
                 type: String,
             },
-            value: {
-                type: String
-            }
         }
     },
     date: {

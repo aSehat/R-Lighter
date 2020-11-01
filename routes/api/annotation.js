@@ -5,6 +5,7 @@ const {check, validationResult} = require('express-validator');
 const Annotation = require('../../models/Annotation');
 const Project = require('../../models/Project');
 const Resource = require('../../models/Resource');
+const {createResources} = require('../utils/resources');
 var ObjectId = require('mongodb').ObjectID;
 
 // @route       POST api/annotation
@@ -20,7 +21,8 @@ router.post('/', auth, async (req, res) => {
 
     try {
         const annotations = await Annotation.collection.insertMany(new_annotations); 
-    
+        const resources = await createResources(annotations.ops);
+        console.log(resources);        
         res.json(annotations);
     } catch (err) {
         console.error(err.message);

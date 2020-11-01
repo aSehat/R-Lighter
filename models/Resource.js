@@ -6,10 +6,14 @@ const ResourceSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'annotation'
     },
-    name: {
+    class: {
         type: String
     },
-    properties: {
+    name: {
+        type: String,
+        unique: true
+    },
+    property: {
         label: {
             type: String,
         },
@@ -19,24 +23,8 @@ const ResourceSchema = new mongoose.Schema({
     },
     resources: [ 
         {
-            annotationId: {
-                type: Schema.Types.ObjectId,
-                ref: 'annotation'
-            },
-            class: {
-                type: String
-            },
-            name: {
-                type: String
-            },
-            properties: {
-                label: {
-                    type: String,
-                },
-                description: {
-                    type: String
-                }
-            }
+            type: Schema.Types.ObjectId,
+            ref: 'resource'
         }
     ],
 });
