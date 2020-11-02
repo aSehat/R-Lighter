@@ -1,10 +1,10 @@
 import React from 'react';
-import PDFHighlights from './components/pdf-highlighter';
-import Signup from './components/signupForm';
-import Login from './components/loginForm'
-import Header from './components/signupHeader'
-import Nav from './components/Nav';
-import Home from'./components/Home';
+import PDFHighlights from './components/PDF-highlighter/pdf-highlighter';
+import Signup from './components/Auth/Signup';
+import Login from './components/Auth/Login'
+import Header from './components/Navbar/SignupHeader'
+import Nav from './components/Navbar/Nav';
+import Home from'./components/Home/Home';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 function App() {

@@ -2,14 +2,34 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const AnnotationSchema = new mongoose.Schema({
-    highlight: {
-        content: {
-            text: {
-                type: String
+    content: {
+        text: {
+            type: String
+        }
+    },
+    position: {
+        boundingRect: {
+            x1: {
+                type: Number
+            }, 
+            y1: {
+                type: Number
+            },
+            x2: {
+                type: Number
+            },
+            y2: {
+                type: Number
+            },
+            width: {
+                type: Number
+            },
+            height: {
+                type: Number
             }
         },
-        position: {
-            boundingRect: {
+        rects: [
+            {
                 x1: {
                     type: Number
                 }, 
@@ -28,32 +48,10 @@ const AnnotationSchema = new mongoose.Schema({
                 height: {
                     type: Number
                 }
-            },
-            rects: [
-                {
-                    x1: {
-                        type: Number
-                    }, 
-                    y1: {
-                        type: Number
-                    },
-                    x2: {
-                        type: Number
-                    },
-                    y2: {
-                        type: Number
-                    },
-                    width: {
-                        type: Number
-                    },
-                    height: {
-                        type: Number
-                    }
-                }
-            ],
-            pageNumber: {
-                type: Number
             }
+        ],
+        pageNumber: {
+            type: Number
         }
     },
     resource: {

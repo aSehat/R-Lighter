@@ -7,7 +7,7 @@ import MenuList from '@material-ui/core/MenuList';
 import ResourceForm from './ResourceForm';
 import PropertyForm from './PropertyForm';
 
-import "./style/Tip.css";
+import "../style/Tip.css";
 
 type State = {
   compact: boolean,
@@ -45,9 +45,9 @@ class Tip extends Component<Props, State> {
     const { compact, type } = this.state;
 
     const renderForm = () => {
-        if(type == "resource"){
+        if(type === "resource"){
             return <ResourceForm onConfirm={onConfirm} content={content} resources={classes}/>
-        } else if(type == "property"){
+        } else if(type === "property"){
             return <PropertyForm onConfirm={onConfirm} content={content} resources={resources}/>
         } else {
             return <h1>ERROR</h1>

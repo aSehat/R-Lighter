@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 
-import "./style/Form.css";
+import "../style/Form.css";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Select from '@material-ui/core/Select';
@@ -12,8 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 
 import type { T_LTWH } from "../types.js";
-const { getKeys } = require('../utils/utils');
-
+const { getKeys } = require('../../utils/utils');
 type Props = {
   position: {
     boundingRect: T_LTWH,
@@ -28,16 +27,15 @@ type Props = {
   isScrolledTo: boolean
 };
 
-class ResourceForm extends Component<Props> {
+class PropertyForm extends Component<Props> {
 
   constructor(props){
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
-    this.changeResourceName = this.changeResourceName.bind(this);
-    this.changeType = this.changeType.bind(this); 
+    this.changeInstantiation = this.changeInstantiation.bind(this); 
     this.state = {
-      type: "",
+      type: "Property",
       resourceName: "",
       property: {
         label: "",
@@ -47,17 +45,11 @@ class ResourceForm extends Component<Props> {
     }
   }
 
-  changeResourceName(event){
+  changeInstantiation(inputValue){
     this.setState({
-      resourceName: event.target.value
-    })
-  }
-
-  changeType(inputValue){
-    this.setState({
-      type: inputValue
+      resourceName: inputValue
     }, () => {
-      console.log(this.state.type);
+      console.log(this.state.resourceName);
     })
     
   }
@@ -85,9 +77,6 @@ class ResourceForm extends Component<Props> {
 
   render() {
     const {
-      onClick,
-      onMouseOver,
-      onMouseOut,
       onConfirm,
       resources,
     } = this.props;
@@ -95,27 +84,24 @@ class ResourceForm extends Component<Props> {
 
     return (
       <form
-      className="resource-form"
+      className="form"
       onSubmit={event => {
         event.preventDefault();
         onConfirm(this.state);
       }}
     >
-          <h3>Create Resource</h3>
+          <h3>Create Property</h3>
           <div className = "field">
             <Autocomplete
-            inputValue={this.state.type} 
+            inputValue={this.state.resourceName} 
             onInputChange={(_, newInputValue) => {
-              this.changeType(newInputValue)}}
+              this.changeInstantiation(newInputValue)}}
             id="Resource"
-            options={getKeys(resources)}
+            options={resources}
             getOptionLabel={(option) => option}
             style={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Resource Type" variant="outlined" />}
+            renderInput={(params) => <TextField {...params} label="Resource Instantiation" variant="outlined" />}
             />
-          </div>
-          <div className = "field">
-            <TextField value={this.state.resourceName} onChange={this.changeResourceName} label="Resource ID"  style={{ width: 300 }} variant="outlined" />
           </div>
           <div className = "field">
             <InputLabel id="property-select-label">Property</InputLabel>
@@ -128,17 +114,17 @@ class ResourceForm extends Component<Props> {
               style={{ width: 300 }}
             >
               <MenuItem value={"label"}>skos:label</MenuItem>
-              <MenuItem value={"description"}>skos:description</MenuItem>
+              <MenuItem value={"description"}>skos:Description</MenuItem>
             </Select>
           </FormControl>
           <div class="field">
               <Button
                   type="submit"
-                  className="create-resource"
+                  className="create-property"
                   variant="contained"
                   color="primary"
               >
-                  Create Resource
+                  Create Property
               </Button>
             </div>
           </div>
@@ -147,4 +133,4 @@ class ResourceForm extends Component<Props> {
   }
 }
 
-export default ResourceForm;
+export default PropertyForm;

@@ -14,18 +14,7 @@ const updateHash = highlight => {
 };
 
 function Sidebar({ highlights, resources, classes, toggleDocument, resetHighlights }: Props) {
-  // const highlightsWithResources = highlights.map(highlight => {
-  //   let resource;
-  //   if(highlight.list == "resources"){
-  //     resource = resources.find(item => item.name == highlight.resource)
-  //   } else {
-  //     resource = classes.find(item => item.name == highlight.resource)
-  //   }
-  //   console.log({...highlight,resource: resource})
-  //   return {...highlight,resource: resource}
-  // })
-  // console.log(highlightsWithResources);
-
+  console.log(highlights);
   return (
     <div className="sidebar" style={{ width: "25vw" }}>
       <div className="description" style={{ padding: "1rem" }}>
@@ -49,7 +38,7 @@ function Sidebar({ highlights, resources, classes, toggleDocument, resetHighligh
             }}
           >
             <div>
-          <strong>{highlight.list}: {highlight.class}/{highlight.resource}</strong>
+          <strong>{highlight.resource.type} {highlight.resource.resourceName}</strong>
               {highlight.resource ? (
                 <blockquote style={{ marginTop: "0.5rem" }}>
                   {`${highlight.content.text.slice(0, 90).trim()}…`}
