@@ -13,9 +13,13 @@ function Nav() {
         <Link to='/PDFHighlights'>
           <li>Create Project</li>
         </Link>
-          
-        <li>Login</li>
-        <li>Sign up</li>
+
+          <Link to='/Login'>
+              <li>Login</li>
+          </Link>
+          <Link to='/Signup'>
+              <li>Sign up</li>
+          </Link>
       </ul>
     </nav>
   );

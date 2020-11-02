@@ -1,7 +1,7 @@
 // User login form
 import React, {useState} from 'react';
 import "./style/loginSignup.css";
-import {axios} from 'axios';
+import axios from 'axios';
 
 
 export default function Login(props) {
@@ -19,40 +19,36 @@ export default function Login(props) {
     };
 
     const sendDetailsToServer = () => {
-        props.showError(null);
+        console.log(null);
         const payload={
-            "email":state.email,
-            "password":state.password,
+            "email": state.email,
+            "password": state.password
         }
-        const API_BASE_URL = "";
-        axios.post(API_BASE_URL+'/user/register', payload)
+        const API_BASE_URL = "http://localhost:5000/api/auth";
+        axios.post(API_BASE_URL, payload)
             .then(function (response) {
                 if(response.status === 200){
                     setState(prevState => ({
                         ...prevState,
-                        'successMessage' : 'Registration successful. Redirecting to home page..'
+                        'successMessage' : 'Login successful. Redirecting to home page..'
                     }))
+                    console.log('Login successful. Redirecting to home page...');
                     //redirectToHome();
-                    props.showError(null)
                 } else{
-                    props.showError("Some error ocurred");
+                    console.log("Some error occurred");
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error.response.request.response);
             });
     }
 
     const handleSubmitClick = (e) => {
         e.preventDefault();
-        if (state.password === state.confirmPassword) {
-            if (state.email.length > 0 && state.password.length > 0) {
-                sendDetailsToServer()
-            } else {
-                props.showError('Email or Password not long enough')
-            }
+        if (state.email.length > 0 && state.password.length > 0) {
+            sendDetailsToServer()
         } else {
-            props.showError('Passwords do not match');
+            console.log('Email or Password not long enough')
         }
     }
 
