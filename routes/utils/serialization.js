@@ -68,6 +68,13 @@ const exportSerialization = async (project, resources, annotations) => {
         var name = element.name;
         var label = element.property.label;
         var description = element.property.description;
+        var Class = element.class;
+        var author = "author";
+        writer.addQuad(quad(
+            namedNode(name),
+            namedNode("dcterms:creator"),
+            literal(author)
+       ));
         if(label){
             writer.addQuad(quad(
             namedNode(name),
@@ -84,8 +91,10 @@ const exportSerialization = async (project, resources, annotations) => {
        }
        writer.addQuad(quad(
            namedNode(name),
-           namedNode("a:")
-       ))
+           namedNode("a :"),
+           literal(Class)
+       ));
+       
 
     })
     
