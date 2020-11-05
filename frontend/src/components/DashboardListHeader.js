@@ -3,6 +3,11 @@ import React, { useState } from "react";
 import { useTable } from 'react-table';
 
 // <button onClick={() => props.setsortby({attribute: "newval"})}>change state</button>
+{/* <tr>
+  <th><button onClick={() => props.setsortby({attribute: "name", ascending: determineAscending(props.sortby, "name")})}>Name</button></th>
+  <th><button onClick={() => props.setsortby({attribute: "date", ascending: determineAscending(props.sortby, "date")})}>Date</button></th>
+  <th><button onClick={() => props.setsortby({attribute: "lang", ascending: determineAscending(props.sortby, "lang")})}>Language</button></th>
+</tr> */}
 
 let IS_FIRST_CLICK = true;
 function determineAscending(current_sortby, attribute_clicked) {
@@ -27,11 +32,25 @@ export default function DashboardListHeader(props) {
   // TODO: also look into making an arrow icon appear to indicate how the list is being sorted
   return (
     <thead>
-      <tr>
-        <th><button onClick={() => props.setsortby({attribute: "name", ascending: determineAscending(props.sortby, "name")})}>Name</button></th>
-        <th><button onClick={() => props.setsortby({attribute: "date", ascending: determineAscending(props.sortby, "date")})}>Date</button></th>
-        <th><button onClick={() => props.setsortby({attribute: "lang", ascending: determineAscending(props.sortby, "lang")})}>Language</button></th>
-      </tr>
+      {
+        // loop over header rows (in case I ever want subheaders)
+        props.headergroups.map((headerGroup) => (
+          // apply header row props
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {
+              // loop over headers in a particular row
+              headerGroup.headers.map((column) => (
+                // apply header cell props
+                <th {...column.getHeaderProps()}>
+                  {
+                    column.render('Header')
+                  }
+                </th>
+              ))
+            }
+          </tr>
+        ))
+      }
     </thead>
   );
 }
