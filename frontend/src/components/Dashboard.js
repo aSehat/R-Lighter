@@ -3,7 +3,8 @@ import DashboardHeader from "./DashboardHeader";
 import DashboardListHeader from "./DashboardListHeader";
 import ProjectList from "./DashboardProjectList";
 import axios from 'axios';
-import ObjectID from 'bson';
+import {ObjectID} from 'bson';
+import { useTable } from 'react-table';
 
 
 // this function will be an axios call to one of the routes
@@ -16,22 +17,42 @@ function getProjects() {
 
 // call '/me' endpoint
 function getUser() {
-  // TODO: uhhh how do i get a user's ID??
-  let uid = new ObjectID("5f88d87e3185332ae039ff0f");
+  // TODO: uhhh how do i get a user's ID?? as of now I've just hardcoded a test user
+  let uid = ObjectID.createFromHexString("5f88d87e3185332ae039ff0f");
   let config = {
-    "user": {"id": uid}
+    headers: {
+      "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwMzY3MTU3NywiZXhwIjoxNjAzNjc1MTc3fQ.GdPwKJ5V1RGFfVMcOlXWxc0PTJqvJJuSJ25nNe9Sj1Q"
+    },
+    params: {
+      user: {id: uid}
+    }
   };
-  axios.get('http://localhost:5000/api/profile/me', config)
-    .then((response) => {
-      return response;
-    });
+  // FIXME: CORS is giving me problems :/
+  // axios.get("http://localhost:5000/api/profile/me", config)
+  //   .then((response) => {
+  //     return response;
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
+
+  // no idea what exactly the api returns, but I'm going to assume it at least has a name field
+  return ({
+    "name": "Ace"
+  });
+}
+
+
+// TODO: implementation of infinite scroll
+function dynamicLoad(setProjects) {
+  //
 }
 
 
 export default function Dashboard(props) {
   // to avoid ambiguity, ascending means to begin with the smallest/first element (0->9, A->Z, etc)
   const [sortBy, setSortBy] = useState({
-    attribute: "name",
+    attribute: "date",
     ascending: true,
   });
 
@@ -59,10 +80,12 @@ export default function Dashboard(props) {
 
   return (
     <div>
-      <DashboardHeader user={() => getUser()}/>
-      <DashboardListHeader sortby={sortBy} altersort={(newState) => setSortBy(newState)}/>
-      <ProjectList sortby={sortBy} projects={projects}/>
-      <p>sort by: {sortBy.attribute}</p>
+      <DashboardHeader getuser={() => getUser()}/>
+      <p>(Delete me) sort by: {sortBy.attribute}, {sortBy.ascending ? "ascending" : "descending"}</p>
+      <table>
+        <DashboardListHeader sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
+        <ProjectList sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
+      </table>
     </div>
   );
 }
