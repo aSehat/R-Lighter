@@ -74,6 +74,45 @@ export default function Dashboard(props) {
     return projects_relevant_info;
   });
 
+  // table data
+  const data = React.useMemo(
+    () => projects.map((current, step) => {
+      return ({
+        "name": current.name,
+        "language": current.language,
+        "date": current.date
+      });
+    }),
+    []
+  );
+
+  // table headers
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Name",
+        accessor: "name"
+      },{
+        Header: "Language",
+        accessor: "language"
+      },{
+        Header: "Date",
+        accessor: "date"
+      }
+    ],
+    []
+  );
+
+  const tableInstance = useTable({columns, data});
+  // useTable returns a whole bunch of stuff
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = tableInstance;
+
 
   // I don't think this is necessary, since a username will never change without a forced logout and redirect
   // const [user, setUser] = useState(() => getUser());
@@ -82,10 +121,11 @@ export default function Dashboard(props) {
     <div>
       <DashboardHeader getuser={() => getUser()}/>
       <p>(Delete me) sort by: {sortBy.attribute}, {sortBy.ascending ? "ascending" : "descending"}</p>
-      <table>
-        <DashboardListHeader sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
-        <ProjectList sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
+      <table {...getTableProps()}>
+        <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
+        <ProjectList gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </table>
+      <div id="infiniteScrollController">If you can see this, something is broken</div>
     </div>
   );
 }
