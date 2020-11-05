@@ -16,6 +16,7 @@ function getProjects() {
 }
 
 // call '/me' endpoint
+// TODO: do I need this??
 function getUser() {
   // TODO: uhhh how do i get a user's ID?? as of now I've just hardcoded a test user
   let uid = ObjectID.createFromHexString("5f88d87e3185332ae039ff0f");
@@ -74,6 +75,13 @@ export default function Dashboard(props) {
     return projects_relevant_info;
   });
 
+  // TODO: write the code to update the db with a new project
+  //  this should also probably redirect and be async??
+  let updateDB = (newProject) => {
+    console.log(newProject);
+    console.log("if only it were that easy");
+  };
+
   // table data
   const data = React.useMemo(
     () => projects.map((current, step) => {
@@ -117,9 +125,10 @@ export default function Dashboard(props) {
   // I don't think this is necessary, since a username will never change without a forced logout and redirect
   // const [user, setUser] = useState(() => getUser());
 
+
   return (
     <div>
-      <DashboardHeader getuser={() => getUser()}/>
+      <DashboardHeader createproject={(newProj) => updateDB(newProj)} getuser={() => getUser()}/>
       <p>(Delete me) sort by: {sortBy.attribute}, {sortBy.ascending ? "ascending" : "descending"}</p>
       <table {...getTableProps()}>
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
