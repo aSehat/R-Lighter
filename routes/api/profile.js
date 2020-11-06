@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 const {check, validationResult} = require('express-validator');
-const Profile = require('../../models/Profile');
+// const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
 
@@ -11,7 +11,7 @@ const User = require('../../models/User');
 // @access      Private
 router.get('/me', auth, async (req, res) => {
     try {
-        const profile = await Profile.findOne({user: req.user.id}).populate('user', ['name']);
+        const profile = await User.findOne({_id: req.user.id}).populate('user', ['name']);
 
         if (! profile) {
             return res.status(400).json({msg: 'There is no profile for this user'});
@@ -53,11 +53,11 @@ router.post('/', auth, async (req, res) => {
     }
 
     try {
-        let profile = await Profile.findOne({user: req.user.id});
+        let profile = await User.findOne({_id: req.user.id});
 
         if (profile) {
-            profile = await Profile.findOneAndUpdate({
-                user: req.user.id
+            profile = await User.findOneAndUpdate({
+                _id: req.user.id
             }, {
                 $set: profileFields
             }, {new: true});
@@ -80,7 +80,7 @@ router.post('/', auth, async (req, res) => {
 // @access      Private
 router.get('/', auth, async (req, res) => {
     try {
-        const profiles = await Profile.find().populate('user', ['name']);
+        const profiles = await User.find().populate('user', ['name']);
         res.json(profiles);
     } catch (err) {
         console.error(err.message);
@@ -94,7 +94,7 @@ router.get('/', auth, async (req, res) => {
 // @access      Private
 router.get('/user/:user_id', auth, async (req, res) => {
     try {
-        const profile = await Profile.findOne({user: req.params.user_id}).populate('user', ['name']);
+        const profile = await User.findOne({_id: req.params.user_id}).populate('user', ['name']);
 
         if (! profile) {
             return res.status(400).json({msg: 'Profile not found'});
@@ -116,8 +116,8 @@ router.get('/user/:user_id', auth, async (req, res) => {
 // @access      Private
 router.delete('/', auth, async (req, res) => {
     try {
-        await Profile.findOneAndRemove({user: req.user.id});
-        
+        // await Profile.findOneAndRemove({user: req.user.id});
+
         await User.findOneAndRemove({_id: req.user.id});
         res.json({msg: 'User Deleted'});
     } catch (err) {

@@ -9,11 +9,17 @@ import { useTable } from 'react-table';
 
 // this function will be an axios call to one of the routes
 // TODO: what is the max number of documents that the database will return?
-function getProjects() {
+const getProjects = (async () => {
+
+  const headers = {
+    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDYzMTEzNiwiZXhwIjoxNjA0NjM0NzM2fQ.ZsUK2zRsfv8hgZgz6v9axfNW0H7sEDC7f-t05_ASxHw"
+  }
   //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
-  let json = require('/Users/macbookpro/Documents/GitHub/MITR-Project/frontend/src/components/DELETE_ME_testProjects.json');
-  return json;
-}
+  const result = await axios.get('http://localhost:5000/api/project', {headers: headers}).then(res => {
+    console.log(res.data);
+  })
+  return [];
+})
 
 // call '/me' endpoint
 // TODO: do I need this??

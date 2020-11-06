@@ -1,0 +1,134 @@
+[
+  {
+    "_id": "1",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "EN",
+    "name": "AAAA",
+    "link": "https://arxiv.org/pdf/1708.08021.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526841992"
+  },
+  {
+    "_id": "2",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "EN",
+    "name": "BBBB",
+    "link": "https://arxiv.org/pdf/1708.08021.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526876339"
+  },
+  {
+    "_id": "3",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "SP",
+    "name": "CCCC",
+    "link": "https://arxiv.org/pdf/1708.08021.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526886059"
+  },
+  {
+    "_id": "4",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "FR",
+    "name": "DDDD",
+    "link": "http://www.pdf995.com/samples/pdf.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526895205"
+  },
+  {
+    "_id": "5",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "EN",
+    "name": "EEEE",
+    "link": "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526909910"
+  },
+  {
+    "_id": "6",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "JA",
+    "name": "FFFF",
+    "link": "http://www.pdf995.com/samples/pdf.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526918493"
+  },
+  {
+    "_id": "7",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "KO",
+    "name": "GGGG",
+    "link": "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526928506"
+  },
+  {
+    "_id": "8",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "TH",
+    "name": "HHHH",
+    "link": "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526958719"
+  },
+  {
+    "_id": "9",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "EN",
+    "name": "IIII",
+    "link": "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526937126"
+  },
+  {
+    "_id": "10",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "EN",
+    "name": "JJJJ",
+    "link": "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526970426"
+  },
+  {
+    "_id": "11",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "EN",
+    "name": "LLLL",
+    "link": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526946240"
+  },
+  {
+    "_id": "12",
+    "users": ["dont care"],
+    "annotations": ["dont care"],
+    "resources": ["dont care"],
+    "language": "ZH",
+    "name": "The long one (DON'T CLICK)",
+    "link": "https://www.hq.nasa.gov/alsj/a17/A17_FlightPlan.pdf",
+    "owner": "dont care - probably",
+    "date": "1604526990665"
+  }
+]
