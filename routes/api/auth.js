@@ -64,14 +64,14 @@ router.post('/', [
                 id: user.id
             }
         };
-        
         jwt.sign(payload, config.get('jwtSecret'), {
             expiresIn: 3600
         }, (err, token) => {
             if (err) {
                 throw err;
             }
-            res.json({token});
+            res.cookie('token', token, { httpOnly: true });
+            res.json({token}).sendStatus(200);
         });
 
     } catch (err) {
