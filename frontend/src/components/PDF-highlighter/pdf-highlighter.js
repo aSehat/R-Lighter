@@ -74,7 +74,8 @@ const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
 class PDFHighlights extends Component<Props, State> {
   state = {
     projectId: "5f9f9edb7a44db212415f321",
-    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDYxODE2MywiZXhwIjoxNjA0NjIxNzYzfQ.iMycN3Gp6L6qhPW3TEw0N4wHFbeUVyXlkALuIO8tQzw",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDM0MzIzMSwiZXhwIjoxNjA0MzQ2ODMxfQ.whMOjaKKCgwgjyxV-AA6Z6IAB72cuCMjq8SkNWnuwdA",
+
     url: initialUrl,
     unsavedHighlights: [],
     highlights: [],
@@ -111,7 +112,7 @@ class PDFHighlights extends Component<Props, State> {
   };
 
   save = () => {
-    console.log(this.state.newHighlights);
+    console.log(this.state.unsavedHighlights);
     let headers = {
       'x-auth-token': this.state.token 
     };
@@ -193,7 +194,7 @@ class PDFHighlights extends Component<Props, State> {
     }
     const property = (highlight.resource.property.label === "") ? "description" : "label"
     this.setState({
-      unsavedHighlight:[ {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id }, ...unsavedHighlights], 
+      unsavedHighlights:[ {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id }, ...unsavedHighlights], 
       highlights: [ {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id }, ...highlights],
     }, () => {
       console.log(this.state.highlights);
