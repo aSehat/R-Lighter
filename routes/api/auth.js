@@ -70,7 +70,7 @@ router.post('/', [
             if (err) {
                 throw err;
             }
-            res.cookie('token', token, { httpOnly: false });
+            res.cookie('token', token, { httpOnly: true });
             res.json({token}).sendStatus(200);
         });
 

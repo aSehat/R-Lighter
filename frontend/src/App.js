@@ -17,11 +17,11 @@ function App() {
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/PDFHighlights" component={withAuth(PDFHighlights)} />
-              <Route path="/Login" exact component={Login} />
+            <Route path="/Login" exact component={Login} />
             <Route path="/project/:id" exact component={PDFHighlights} />
             <Route path="/Login" exact component={Login} />
             <Route path="/Signup" exact component={Signup} />
-            <Route path="/Dashboard" exact component={Dashboard} />
+            <Route path="/Dashboard" exact component={withAuth(Dashboard)} />
           </Switch>
         </div>
       </Router>
