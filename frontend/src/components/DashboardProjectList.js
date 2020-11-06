@@ -24,7 +24,10 @@ export default function DashboardProjectList(props) {
         // TODO: find out what this sorcery entails
         props.preparerow(row)
         return (
-          <TableRow {...row.getRowProps()}>
+          <TableRow {...row.getRowProps()} onClick={() => {
+            console.log(row.getRowProps());
+            props.getproject(row)
+            }}>
             {row.cells.map(cell => {
               return (
                 <TableCell {...cell.getCellProps()}>
