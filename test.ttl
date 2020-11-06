@@ -1,0 +1,97 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <https://rdf.ag/o/test#> .
+@prefix as: <http://www.w3.org/ns/activitystreams#> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix cereals: <https://rdf.ag/o/cerealsToo#> .
+@prefix dbpedia: <http://dbpedia.org/resource/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix eurovoc: <http://eurovoc.europa.eu/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix nif-core: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix geonames: <http://sws.geonames.org/> .
+@prefix loc: <http://id.loc.gov/vocabulary/relators/> .
+@prefix oa: <http://www.w3.org/ns/oa#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix skosxl: <http://www.w3.org/2008/05/skos-xl#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://rdf.ag/o/test>                 # resource for the project
+    dcterms:creator :warren ;           # name of annotation creator
+    dcterms:title "Test Ontology"@en ;  # title of project
+    void:inDataset :datasetdefinition ; # defines dataset as datasetdefinition (resource defined below) 
+    a <http://purl.org/vocommons/voaf#Vocabulary>, owl:Ontology ;  
+    rdfs:label "Test Ontology"@en ;     # title of project
+    foaf:name "Test Ontology"@en .      # title of project
+
+<https://rdf.ag/o/test#00000>                               # Resource for the PDF
+    dcterms:creator :llui ;                                 # Author of project
+    dcterms:date "2019-03-28" ;                             # Date published PDF
+    dcterms:isPartOf :j34232 ;                              # Resource for the Journal the PDF resides in
+    dcterms:title "Registration of ‘Vision 50’ Wheat"@en ;  # title of PDF article
+    bibo:pageEnd "198" ;                                    # start page number                              
+    bibo:pageStart "193" ;                                  # end page number
+    bibo:volume "13" ;                                      # volume number
+    a bibo:Article .                                        # labels the resource as class Article
+
+####### Data extracted from Bibtex citations (expressed in PDF) #####
+# PDF has metadata like author and title, not necessarily page info 
+################################################## 
+
+<https://rdf.ag/o/test#345145145135>    # annotation resource
+    nif-core:isString "‘Vision 50’ (Reg. No. CV-1152, PI 679953), a hard red winter (HRW) wheat (Triticum aestivum L.) cultivar, was derived from the cross ‘Jagalene’/‘Provinciale’ using a modified bulk breeding method." ; # text highlighted 
+    a nif-core:String ;                 # of type string
+    prov:hadPrimarySource <https://rdf.ag/o/test#00000> . # primary source indicates which PDF the annotation came from
+
+<https://rdf.ag/o/test#934t3443t>       # annotation resource
+    nif-core:isString "Wheat" ;         # text highlighted
+    a nif-core:String ;                 # of type string
+    prov:hadPrimarySource <https://rdf.ag/o/test#00000> .   # primary source indicates the resource for the PDF
+
+:Vision50Instance                                           # resource instantiation of class Wheat called Vision50Instance
+    dcterms:creator :warren ;                               # creator of the resource (will be tagged on all resources)
+    a :WheatClass ;                                              # Vision50Instance is of Class Wheat  
+    rdfs:label "Vision 50"@en ;                             # label for resource
+    skos:definition "A hard red winter (HRW) wheat (Triticum aestivum L.) cultivar derived from the cross Jagalene / Provinciale using a modified bulk breeding method."@en ; # description for resource
+    prov:hadPrimarySource <https://rdf.ag/o/test#00000> ;   # primary source indicates which PDF the resource came from
+    prov:wasDerivedFrom <https://rdf.ag/o/test#345145145135>, :w345g34535 . # indicates which annotation(s) the resource came from 
+    
+:WheatClass                                                 # resource class called Wheat 
+    dcterms:creator :warren ;                               # creator of the resource (will be tagged on all resources)
+    a owl:Class ;                                           # WheatClass is of Class Wheat
+    rdfs:label "Wheat"@en ;                                 # label for Wheat class
+    prov:hadPrimarySource <https://rdf.ag/o/test#00000> ;   # points to the PDF resource 
+    prov:wasDerivedFrom <https://rdf.ag/o/test#934t3443t> . # indicates which annotation the resource came from 
+
+:datasetdefinition                                          # resource defines the Project datasetDefinition
+    dcterms:creator :warren ;                               # creator of the project
+    dcterms:title "Test Ontology"@en ;                      # title of the project
+    a void:Dataset ;                                        # indicates this as Class Dataset
+    rdfs:label "Test Ontology"@en ;                         # name of project
+    foaf:name "Test Ontology"@en .                          # name of project
+
+:j34232                                                     # resource defines the journal (extracted by bibtex citations)
+    dcterms:title "Journal of Plant Registration"@en ;      # defines journal title
+    a bibo:Journal .                                        # resource is of class Journal
+
+:llui                                                       # resource defines the primary author of the PDF
+    a foaf:Person ;                                         # is of class Person
+    foaf:name "L. Lui" .                                    # the name of the author             
+
+:w345g34535                                                 # annotation resource for the label for resource Vision50Instance
+    nif-core:isString "Vision 50" ;                         # annotation highlighted text
+    a nif-core:String ;                                     # is of Class String (denoted for all annotations)
+    prov:hadPrimarySource <https://rdf.ag/o/test#00000> .   # points to the PDF resource
+
+:warren                                                     # project owner resource
+    a foaf:Person ;                                         # is of class Person
+    foaf:name "Rob Warren" .                                # name of the person
+

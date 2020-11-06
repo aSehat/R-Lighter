@@ -2,11 +2,9 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 const {check, validationResult} = require('express-validator');
-const Annotation = require('../../models/Annotation');
 const Project = require('../../models/Project');
-const Resource = require('../../models/Resource');
-const User = require('../../models/User');
-
+const {getAnnotationsById} = require('../utils/annotation');
+const {getResourceNamesById} = require('../utils/resources');
 
 // @route       POST api/project
 // @desc        Create or update a project
@@ -20,6 +18,7 @@ router.post('/', auth, async (req, res) => {
     const {
         name,
         link,
+        prefix,
         language
     } = req.body;
 
@@ -30,6 +29,9 @@ router.post('/', auth, async (req, res) => {
     }
     if (language) {
         projectFields.language = language;
+    }
+    if(prefix) {
+        projectFields.prefix = prefix;
     }
 
     projectFields.owner = req.user.id;
@@ -56,8 +58,11 @@ router.get('/:project_id', auth, async (req, res) => {
         if (! project) {
             return res.status(400).json({msg: 'Project not found'});
         }
-
-        res.json(project);
+        // console.log(project); 
+        const annotations = await getAnnotationsById(project.annotations);
+        const {resources, classes} = await getResourceNamesById(project.resources);
+        console.log(resources, classes);
+        res.json({project, annotations, resources, classes});
     } catch (err) {
         if (err.kind == 'ObjectId') {
             return res.status(400).json({msg: 'Project not found'});
