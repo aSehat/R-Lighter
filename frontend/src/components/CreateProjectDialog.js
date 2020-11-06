@@ -55,13 +55,13 @@ export default function CreateProjectDialog(props) {
       }}
     >
           <div className = "field">
-          <TextField value={projectFields.name} onChange={(e) => changeFormValue(e, "name")} label="Project Name"  style={{ width: 300 }} variant="outlined" />
+          <TextField value={projectFields.name} onChange={(e) => changeFormValue(e, "name")} label="Project Name"  style={{ width: 300 }} variant="outlined" required={true} />
           </div>
           <div className = "field">
-          <TextField value={projectFields.link} onChange={(e) => changeFormValue(e, "link")} label="Project Link"  style={{ width: 300 }} variant="outlined" />
+          <TextField value={projectFields.link} onChange={(e) => changeFormValue(e, "link")} label="Project Link"  style={{ width: 300 }} variant="outlined" required={true}/>
           </div>
           <div className = "field">
-          <TextField value={projectFields.prefix} onChange={(e) => changeFormValue(e, "prefix")} label="Project Prefix"  style={{ width: 300 }} variant="outlined" />
+          <TextField value={projectFields.prefix} onChange={(e) => changeFormValue(e, "prefix")} label="Project Prefix"  style={{ width: 300 }} variant="outlined" required={true}/>
           <div class="field">
               <Button
                   type="submit"

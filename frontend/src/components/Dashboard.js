@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import DashboardHeader from "./DashboardHeader";
 import DashboardListHeader from "./DashboardListHeader";
 import ProjectList from "./DashboardProjectList";
 import axios from 'axios';
@@ -7,6 +6,10 @@ import {ObjectID} from 'bson';
 import { useTable } from 'react-table';
 import Table from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import CreateProjectDialog from './CreateProjectDialog';
+
+import AddProjectBtn from './layout/AddProjectBtn';
 import './style/Dashboard.css';
 // this function will be an axios call to one of the routes
 // TODO: what is the max number of documents that the database will return?
@@ -168,13 +171,14 @@ export default function Dashboard(props) {
 
   return (
     <div>
-      <DashboardHeader handlepopup={handlePopupFunctions} createproject={(newProj) => updateDB(newProj)} getuser={() => getUser()}/>
       <p>(Delete me) sort by: {sortBy.attribute}, {sortBy.ascending ? "ascending" : "descending"}</p>
       <div className="projects">
       <Table {...getTableProps()} component={Paper}>
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
         <ProjectList getproject={getProject} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </Table>
+      <CreateProjectDialog  open={open} onConfirm={() => createProject()} onClose={() => handleClose()} />
+      <AddProjectBtn open={handleClickOpen}/>
       </div>
     </div>
   );

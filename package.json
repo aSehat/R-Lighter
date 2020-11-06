@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/aSehat/MITR-Project#readme",
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.1",
     "cookie-parser": "^1.4.5",
