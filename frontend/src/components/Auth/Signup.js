@@ -1,7 +1,6 @@
 // User registration form
 import React, {useState} from 'react';
 import "../style/loginSignup.css";
-import Header from '../Navbar/SignupHeader';
 import axios from 'axios';
 
 

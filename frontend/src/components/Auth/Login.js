@@ -27,12 +27,14 @@ export default function Login(props) {
         const API_BASE_URL = "http://localhost:5000/api/auth";
         axios.post(API_BASE_URL, payload)
             .then(function (response) {
+                console.log(response);
                 if(response.status === 200){
                     setState(prevState => ({
                         ...prevState,
                         'successMessage' : 'Login successful. Redirecting to home page..'
                     }))
                     console.log('Login successful. Redirecting to home page...');
+                    window.location = "/"
                     //redirectToHome();
                 } else{
                     console.log("Some error occurred");
