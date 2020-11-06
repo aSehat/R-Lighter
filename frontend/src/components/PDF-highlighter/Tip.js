@@ -7,7 +7,7 @@ import MenuList from '@material-ui/core/MenuList';
 import ResourceForm from './ResourceForm';
 import PropertyForm from './PropertyForm';
 
-import "./style/Tip.css";
+import "../style/Tip.css";
 
 type State = {
   compact: boolean,
