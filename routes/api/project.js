@@ -18,6 +18,7 @@ router.post('/', auth, async (req, res) => {
     const {
         name,
         link,
+        prefix,
         language
     } = req.body;
 
@@ -28,6 +29,9 @@ router.post('/', auth, async (req, res) => {
     }
     if (language) {
         projectFields.language = language;
+    }
+    if(prefix) {
+        projectFields.prefix = prefix;
     }
 
     projectFields.owner = req.user.id;

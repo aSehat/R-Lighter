@@ -34,7 +34,10 @@ const ProjectSchema = new mongoose.Schema({
     ],
     language: {
         type: String,
-        default: 'EN'
+        default: 'en'
+    },
+    prefix: {
+        type: String,
     },
     date: {
         type: Date,

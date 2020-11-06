@@ -5,6 +5,7 @@ import React, { Component } from "react";
 import PDFWorker from "worker-loader!pdfjs-dist/lib/pdf.worker";
 import Button from "@material-ui/core/Button";
 import axios from 'axios';
+import { saveAs } from 'file-saver';
 
 import {
   PdfLoader,
@@ -74,6 +75,7 @@ class PDFHighlights extends Component<Props, State> {
   state = {
     projectId: "5f9f9edb7a44db212415f321",
     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDM0MzIzMSwiZXhwIjoxNjA0MzQ2ODMxfQ.whMOjaKKCgwgjyxV-AA6Z6IAB72cuCMjq8SkNWnuwdA",
+
     url: initialUrl,
     unsavedHighlights: [],
     highlights: [],
@@ -119,6 +121,25 @@ class PDFHighlights extends Component<Props, State> {
       unsavedHighlights: []
     });
   }
+
+  export = () => {
+    this.save();
+    let headers = {
+      'x-auth-token': this.state.token 
+    };
+    axios.get('http://localhost:5000/api/serialization/'+ this.state.projectId, {headers: headers}).then(res => {
+      var content = res.data.rdf;
+      // any kind of extension (.txt,.cpp,.cs,.bat)
+      var filename = "exportedResources.ttl";
+  
+      var blob = new Blob([content], {
+      type: "text/plain;charset=utf-8"
+      });
+  
+      saveAs(blob, filename); 
+    });
+}
+
 
   componentDidMount() {
     window.addEventListener(
@@ -225,6 +246,7 @@ class PDFHighlights extends Component<Props, State> {
           }}
         >
           <Button onClick={() => this.save()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Save</Button>
+          <Button onClick={() => this.export()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Export Annotations</Button>
           <PdfLoader url={url} beforeLoad={<Spinner />}>
             {pdfDocument => (
               <PdfHighlighter
