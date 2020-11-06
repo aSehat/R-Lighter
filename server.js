@@ -7,7 +7,7 @@ connectDB();
 
 app.use(cors());
 app.options('*', cors());
-app.use(express.json({extended: false}));   
+app.use(express.json({extended: false}));
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
@@ -17,6 +17,7 @@ app.use(function(req, res, next) {
   });
 app.get('/', (req, res) => res.send('API Running'));
 app.use('/api/users', require('./routes/api/users'));
+app.use('/api/profile', require('./routes/api/profile'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/project', require('./routes/api/project'));
 app.use('/api/serialization', require('./routes/api/serialization'));
