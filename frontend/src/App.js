@@ -14,8 +14,8 @@ function App() {
           <Nav />
           <Switch>
             <Route path="/" exact component={Home} />
-            <Route path="/PDFHighlights" exact component={PDFHighlights} />
-              <Route path="/Login" exact component={Login} />
+            <Route path="/project/:id" exact component={PDFHighlights} />
+            <Route path="/Login" exact component={Login} />
             <Route path="/Signup" exact component={Signup} />
             <Route path="/Dashboard" exact component={Dashboard} />
           </Switch>
