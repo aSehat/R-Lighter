@@ -8,10 +8,10 @@ function Nav() {
       <h1>RDF-Highlighter</h1>
       <ul className="nav-bar">
         <Link to='/'>
-           <li>Home</li>
+          <li>Home</li>
         </Link>
-        <Link to='/PDFHighlights'>
-          <li>Create Project</li>
+        <Link to='/Dashboard'>
+          <li>Projects Dashboard</li>
         </Link>
 
           <Link to='/Login'>
