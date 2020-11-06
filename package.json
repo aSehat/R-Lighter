@@ -28,6 +28,7 @@
     "config": "^3.3.1",
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
+    "file-saver": "^2.0.2",
     "jsonwebtoken": "^8.5.1",
     "loader": "^2.1.1",
     "loader.js": "^4.7.0",
