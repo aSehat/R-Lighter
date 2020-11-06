@@ -1,13 +1,18 @@
 import { is } from "immutable";
 import React, { useState } from "react";
 import { useTable } from 'react-table';
+import { lighten, makeStyles } from '@material-ui/core/styles';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
 
 // <button onClick={() => props.setsortby({attribute: "newval"})}>change state</button>
-{/* <tr>
+/* <tr>
   <th><button onClick={() => props.setsortby({attribute: "name", ascending: determineAscending(props.sortby, "name")})}>Name</button></th>
   <th><button onClick={() => props.setsortby({attribute: "date", ascending: determineAscending(props.sortby, "date")})}>Date</button></th>
   <th><button onClick={() => props.setsortby({attribute: "lang", ascending: determineAscending(props.sortby, "lang")})}>Language</button></th>
-</tr> */}
+</tr> */
 
 let IS_FIRST_CLICK = true;
 function determineAscending(current_sortby, attribute_clicked) {
@@ -31,26 +36,16 @@ export default function DashboardListHeader(props) {
   //    I think it shouldn't change the first time, then if you click it again it flips to descending
   // TODO: also look into making an arrow icon appear to indicate how the list is being sorted
   return (
-    <thead>
-      {
-        // loop over header rows (in case I ever want subheaders)
-        props.headergroups.map((headerGroup) => (
-          // apply header row props
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {
-              // loop over headers in a particular row
-              headerGroup.headers.map((column) => (
-                // apply header cell props
-                <th {...column.getHeaderProps()}>
-                  {
-                    column.render('Header')
-                  }
-                </th>
-              ))
-            }
-          </tr>
-        ))
-      }
-    </thead>
+    <TableHead>
+      {props.headergroups.map(headerGroup => (
+        <TableRow {...headerGroup.getHeaderGroupProps()}>
+          {headerGroup.headers.map(column => (
+            <TableCell {...column.getHeaderProps()}>
+              {column.render('Header')}
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </TableHead>
   );
 }

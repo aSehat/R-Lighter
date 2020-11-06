@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useTable } from 'react-table';
-
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
 
 
 
@@ -17,28 +19,22 @@ import { useTable } from 'react-table';
 
 export default function DashboardProjectList(props) {
   return (
-    <tbody {...props.gettablebodyprops()}>
-      {
-        props.rows.map((row) => {
-          // TODO: find out what this sorcery entails
-          props.preparerow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {
-                row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>
-                      {
-                        cell.render('Cell')
-                      }
-                    </td>
-                  );
-                })
-              }
-            </tr>
-          );
-        })
-      }
-    </tbody>
+    <TableBody {...props.gettablebodyprops()}>
+      {props.rows.map((row, i) => {
+        // TODO: find out what this sorcery entails
+        props.preparerow(row)
+        return (
+          <TableRow {...row.getRowProps()}>
+            {row.cells.map(cell => {
+              return (
+                <TableCell {...cell.getCellProps()}>
+                  {cell.render('Cell')}
+                </TableCell>
+              )
+            })}
+          </TableRow>
+        )
+      })}
+    </TableBody>
   );
 }
