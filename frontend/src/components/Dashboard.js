@@ -12,7 +12,7 @@ import './style/Dashboard.css';
 // TODO: what is the max number of documents that the database will return?
 const getProjects = (async () => {
   const headers = {
-    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDYzNTE2MywiZXhwIjoxNjA0NjM4NzYzfQ.ALTmTA71JG8QLY6jYX7PUgo-b2qehNhIH2p6ylYqXCs"
+    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDY0MDEzMCwiZXhwIjoxNjA0NjQzNzMwfQ.aCSE5sg4RYFVUQWWPtnjN8tLdUi4NNUNGMAScpbcpJk"
   }
   //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
   const result = await axios.get('http://localhost:5000/api/project', {headers: headers}).then(res => {
@@ -34,16 +34,6 @@ function getUser() {
       user: {id: uid}
     }
   };
-  // FIXME: CORS is giving me problems :/
-  // axios.get("http://localhost:5000/api/profile/me", config)
-  //   .then((response) => {
-  //     return response;
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //   });
-
-  // no idea what exactly the api returns, but I'm going to assume it at least has a name field
   return ({
     "name": "Ace"
   });
@@ -83,8 +73,7 @@ export default function Dashboard(props) {
           "date": current.date
         });
       });
-      console.log(projects_relevant_info);
-      setProjects(projects_relevant_info)
+      setProjects(projects_relevant_info);
     }
     setProjectsList();
   }, []);
@@ -96,11 +85,13 @@ export default function Dashboard(props) {
     console.log("if only it were that easy");
   };
 
+
   // table data
   const data = React.useMemo(
     () => {
       const projectsList = projects.map((current, step) => {
         return ({
+          "_id": current._id,
           "name": current.name,
           "language": current.language,
           "date": current.date
@@ -139,22 +130,52 @@ export default function Dashboard(props) {
     prepareRow,
   } = tableInstance;
 
+  const getProject = (info) => {
+    window.location = "/project/" + info.original._id;
+  }
+
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (value) => {
+    setOpen(false);
+  };
+
+  const createProject = async (project) => {
+    const headers = {
+      "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDY0MDEzMCwiZXhwIjoxNjA0NjQzNzMwfQ.aCSE5sg4RYFVUQWWPtnjN8tLdUi4NNUNGMAScpbcpJk"
+    }
+    //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
+    const result = await axios.post('http://localhost:5000/api/project', project, {headers: headers}).then(res => {
+      return res.data
+    })
+    return result;
+  }
 
   // I don't think this is necessary, since a username will never change without a forced logout and redirect
   // const [user, setUser] = useState(() => getUser());
 
+  const handlePopupFunctions = {
+    handleclickopen: handleClickOpen,
+    handleclose: handleClose,
+    open: open,
+    onconfirm: createProject
+  }
 
   return (
     <div>
-      <DashboardHeader createproject={(newProj) => updateDB(newProj)} getuser={() => getUser()}/>
+      <DashboardHeader handlepopup={handlePopupFunctions} createproject={(newProj) => updateDB(newProj)} getuser={() => getUser()}/>
       <p>(Delete me) sort by: {sortBy.attribute}, {sortBy.ascending ? "ascending" : "descending"}</p>
       <div className="projects">
       <Table {...getTableProps()} component={Paper}>
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
-        <ProjectList gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
+        <ProjectList getproject={getProject} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </Table>
       </div>
-      <div id="infiniteScrollController">If you can see this, something is broken</div>
     </div>
   );
 }
