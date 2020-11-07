@@ -1,6 +1,7 @@
 // User login form
 import React, {useState} from 'react';
 import "../style/loginSignup.css";
+import setAuthToken from '../../utils/setAuthToken';
 import axios from 'axios';
 
 
@@ -34,7 +35,7 @@ export default function Login(props) {
                         'successMessage' : 'Login successful. Redirecting to home page..'
                     }))
                     alert('Login successful. Redirecting to home page...');
-                    
+                    setAuthToken(response.data.token);
                     //window.location = "/"
                     //redirectToHome();
                 } else{

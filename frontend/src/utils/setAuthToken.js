@@ -6,6 +6,7 @@ const setAuthToken = token => {
     } else {
         delete axios.defaults.headers.common['x-auth-token'];
     }
+    localStorage.setItem("token", token);
 }
 
 export default setAuthToken;
