@@ -112,8 +112,6 @@ class PDFHighlights extends Component<Props, State> {
   };
 
   save = () => {
-    console.log(this.state.unsavedHighlights);
-    
     let headers = {
       'x-auth-token': this.state.token 
     };

@@ -8,8 +8,6 @@ const { namedNode, literal, defaultGraph, quad } = DataFactory;
 
 const exportSerialization = async (project, resources, annotations, user) => { 
     console.log("project:",project);
-    // console.log("annotations:",annotations);
-    // console.log("resources:",resources);
     console.log('user', user);
     var prefix = project.prefix;
     const primarySource = project._id;
