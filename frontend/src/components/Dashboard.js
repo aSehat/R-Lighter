@@ -5,10 +5,9 @@ import axios from 'axios';
 import {ObjectID} from 'bson';
 import { useTable } from 'react-table';
 import Table from '@material-ui/core/Table';
+import { withRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import CreateProjectDialog from './CreateProjectDialog';
-import Cookies from 'js-cookie';
 
 import AddProjectBtn from './layout/AddProjectBtn';
 import './style/Dashboard.css';
@@ -19,7 +18,7 @@ const getProjects = (async () => {
   let headers = {
     'x-auth-token': localStorage.getItem("token") 
   };
-  const result = await axios.get('http://localhost:5000/api/project', {headers: headers}).then(res => {
+  const result = await axios.get('/api/project', {headers: headers}).then(res => {
     return res.data
   })
   return result;
@@ -50,7 +49,7 @@ function dynamicLoad(setProjects) {
 }
 
 
-export default function Dashboard(props) {
+function Dashboard({history,...props}) {
   // to avoid ambiguity, ascending means to begin with the smallest/first element (0->9, A->Z, etc)
   const [sortBy, setSortBy] = useState({
     attribute: "date",
@@ -139,7 +138,7 @@ export default function Dashboard(props) {
   } = tableInstance;
 
   const getProject = (info) => {
-    window.location = "/project/" + info.original._id;
+    history.push("/project/" + info.original._id);
   }
 
 
@@ -187,3 +186,5 @@ export default function Dashboard(props) {
     </div>
   );
 }
+
+export default withRouter(Dashboard);

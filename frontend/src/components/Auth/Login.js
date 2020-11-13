@@ -3,9 +3,33 @@ import React, {useState} from 'react';
 import "../style/loginSignup.css";
 import setAuthToken from '../../utils/setAuthToken';
 import axios from 'axios';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import {withRouter} from 'react-router-dom';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import TextField from '@material-ui/core/TextField';
 
+const useStyles = makeStyles((theme) => ({
+    paper: {
+      marginTop: theme.spacing(8),
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    form: {
+      width: '100%', // Fix IE 11 issue.
+      marginTop: theme.spacing(1),
+    },
+    submit: {
+      margin: theme.spacing(3, 0, 2),
+    },
+}));
 
-export default function Login(props) {
+function Login({history ,...props}) {
+    const styles = useStyles();
+
     const [state , setState] = useState({
         email : "",
         password : ""
@@ -20,7 +44,6 @@ export default function Login(props) {
     };
 
     const sendDetailsToServer = () => {
-        console.log(null);
         const payload={
             "email": state.email,
             "password": state.password
@@ -36,8 +59,7 @@ export default function Login(props) {
                     }))
                     alert('Login successful. Redirecting to home page...');
                     setAuthToken(response.data.token);
-                    window.location = "/dashboard";
-                    //redirectToHome();
+                    history.push("/Dashboard");
                 } else{
                     console.log("Some error occurred");
                 }
@@ -57,39 +79,55 @@ export default function Login(props) {
     }
 
     return (
-        <>
-            <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
-                <form>
-                    <div className="form-group text-left">
-                        <label htmlFor="email1">Email Address</label>
-                        <input type="email"
-                               className="form-control"
-                               id="email"
-                               aria-describedby="emailHelp"
-                               placeholder="Enter Email"
-                               value={state.email}
-                               onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group text-left">
-                        <label htmlFor="password">Password</label>
-                        <input type="password"
-                               className="form-control"
-                               id="password"
-                               placeholder="Enter Password"
-                               value={state.password}
-                               onChange={handleChange}
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        onClick={handleSubmitClick}
-                    >
-                        Register
-                    </button>
-                </form>
-            </div>
-        </>
+    <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={styles.paper}>
+            <Typography component="h1" variant="h5">
+            Login
+            </Typography>
+            <form className={styles.form} noValidate>
+                <TextField 
+                    type="email"
+                    name="email"
+                    id="email"
+                    aria-describedby="emailHelp"
+                    placeholder="Enter Email"
+                    value={state.email}
+                    onChange={handleChange}
+                    variant="outlined"
+                    margin="normal"
+                    label="Email Address"
+                    required
+                    fullWidth
+                    autoFocus
+                />
+                <TextField 
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter Password"
+                    value={state.password}
+                    onChange={handleChange}
+                    variant="outlined"
+                    margin="normal"
+                    label="Password"
+                    required
+                    fullWidth
+                />
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={styles.submit}
+                    onClick={handleSubmitClick}
+                >
+                    Login
+                </Button>
+            </form>
+        </div>
+    </Container>
     )
 };
+
+export default withRouter(Login);

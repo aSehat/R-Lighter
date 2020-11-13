@@ -3,6 +3,7 @@ import PDFHighlights from './components/PDF-highlighter/pdf-highlighter';
 import Signup from './components/Auth/Signup';
 import Login from './components/Auth/Login'
 import Nav from './components/Navbar/Nav';
+import AuthNav from './components/Navbar/AuthNav';
 import Home from'./components/Home/Home';
 import withAuth from './components/Auth/withAuth';
 import Dashboard from './components/Dashboard';
@@ -13,7 +14,8 @@ function App() {
   return (
       <Router>
         <div className="App">
-          <Nav />
+          <Route path={["/", "/Login", "/Signup"]} exact component={Nav}/>
+          <Route path={["/Dashboard", "/project/:id"]} exact component={withAuth(AuthNav)}/>
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/Login" exact component={Login} />
@@ -24,7 +26,6 @@ function App() {
           </Switch>
         </div>
       </Router>
-
   );
 }
 
