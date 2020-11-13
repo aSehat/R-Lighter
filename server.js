@@ -25,6 +25,8 @@ app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/project', require('./routes/api/project'));
 app.use('/api/serialization', require('./routes/api/serialization'));
 app.use('/api/annotation', require('./routes/api/annotation'));
+app.use('/api/pdf', require('./routes/api/pdf'));
+
 
 const PORT = process.env.PORT || 5000;
 
