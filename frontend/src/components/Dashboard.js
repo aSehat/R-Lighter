@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import DashboardHeader from "./DashboardHeader";
 import DashboardListHeader from "./DashboardListHeader";
 import ProjectList from "./DashboardProjectList";
 import axios from 'axios';
@@ -7,14 +6,19 @@ import {ObjectID} from 'bson';
 import { useTable } from 'react-table';
 import Table from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import CreateProjectDialog from './CreateProjectDialog';
+import Cookies from 'js-cookie';
+
+import AddProjectBtn from './layout/AddProjectBtn';
 import './style/Dashboard.css';
 // this function will be an axios call to one of the routes
 // TODO: what is the max number of documents that the database will return?
 const getProjects = (async () => {
-  const headers = {
-    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDY0MDEzMCwiZXhwIjoxNjA0NjQzNzMwfQ.aCSE5sg4RYFVUQWWPtnjN8tLdUi4NNUNGMAScpbcpJk"
-  }
   //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
+  let headers = {
+    'x-auth-token': localStorage.getItem("token") 
+  };
   const result = await axios.get('http://localhost:5000/api/project', {headers: headers}).then(res => {
     return res.data
   })
@@ -147,7 +151,7 @@ export default function Dashboard(props) {
 
   const createProject = async (project) => {
     const headers = {
-      "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDY0MDEzMCwiZXhwIjoxNjA0NjQzNzMwfQ.aCSE5sg4RYFVUQWWPtnjN8tLdUi4NNUNGMAScpbcpJk"
+      "x-auth-token": localStorage.getItem("token")
     }
     //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
     const result = await axios.post('http://localhost:5000/api/project', project, {headers: headers}).then(res => {
@@ -168,13 +172,14 @@ export default function Dashboard(props) {
 
   return (
     <div>
-      <DashboardHeader handlepopup={handlePopupFunctions} createproject={(newProj) => updateDB(newProj)} getuser={() => getUser()}/>
       <p>(Delete me) sort by: {sortBy.attribute}, {sortBy.ascending ? "ascending" : "descending"}</p>
       <div className="projects">
       <Table {...getTableProps()} component={Paper}>
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
         <ProjectList getproject={getProject} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </Table>
+      <CreateProjectDialog  open={open} onConfirm={(project) => createProject(project)} onClose={() => handleClose()} />
+      <AddProjectBtn open={handleClickOpen}/>
       </div>
     </div>
   );
