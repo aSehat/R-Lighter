@@ -97,6 +97,7 @@ export default function Dashboard(props) {
         return ({
           "_id": current._id,
           "name": current.name,
+          "link": current.link,
           "language": current.language,
           "date": current.date
         });
@@ -118,6 +119,9 @@ export default function Dashboard(props) {
       },{
         Header: "Date",
         accessor: "date"
+      }, {
+        Header: "Link",
+        accessor: "link"
       }
     ],
     []
@@ -154,7 +158,7 @@ export default function Dashboard(props) {
       "x-auth-token": localStorage.getItem("token")
     }
     //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
-    const result = await axios.post('http://localhost:5000/api/project', project, {headers: headers}).then(res => {
+    const result = await axios.post('/api/project', project, {headers: headers}).then(res => {
       return res.data
     })
     return result;
@@ -172,7 +176,6 @@ export default function Dashboard(props) {
 
   return (
     <div>
-      <p>(Delete me) sort by: {sortBy.attribute}, {sortBy.ascending ? "ascending" : "descending"}</p>
       <div className="projects">
       <Table {...getTableProps()} component={Paper}>
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>

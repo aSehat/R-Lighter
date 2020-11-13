@@ -36,7 +36,7 @@ export default function Login(props) {
                     }))
                     alert('Login successful. Redirecting to home page...');
                     setAuthToken(response.data.token);
-                    //window.location = "/"
+                    window.location = "/dashboard";
                     //redirectToHome();
                 } else{
                     console.log("Some error occurred");

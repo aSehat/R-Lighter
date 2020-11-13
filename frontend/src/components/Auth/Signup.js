@@ -35,6 +35,7 @@ export default function Signup(props) {
                         ...prevState,
                         'successMessage' : 'Registration successful. Redirecting to home page..'
                     }))
+                    window.location = "/dashboard";
                     //redirectToHome();
                 } else{
                     console.log("Some error occurred");

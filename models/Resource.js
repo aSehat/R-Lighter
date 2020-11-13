@@ -11,7 +11,6 @@ const ResourceSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        unique: true
     },
     property: {
         label: {
