@@ -27,19 +27,6 @@ export default function DashboardHeader(props) {
   // idk if this is necessary, might be nice
   // let user_info = props.getuser();
   // console.log(user_info);
-  const testProject = {
-    "_id": "13",
-    "users": ["dont care"],
-    "annotations": ["dont care"],
-    "resources": ["dont care"],
-    "language": "EN",
-    "name": "MMMM",
-    "link": "https://arxiv.org/pdf/1708.08021.pdf",
-    "owner": "dont care - probably",
-    "date": "1604610329490"
-  };
-
-
 
   return (
     <div className="inline">
@@ -48,6 +35,7 @@ export default function DashboardHeader(props) {
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
             <MenuIcon />
           </IconButton>
+
           <Button color="inherit" onClick={props.handlepopup.handleclickopen}>
             Create Project
           </Button>
