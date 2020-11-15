@@ -16,7 +16,7 @@ import './style/Dashboard.css';
 const getProjects = (async () => {
   //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
   let headers = {
-    'x-auth-token': localStorage.getItem("token") 
+    'x-auth-token': localStorage.getItem("token")
   };
   const result = await axios.get('/api/project', {headers: headers}).then(res => {
     return res.data
@@ -126,8 +126,39 @@ function Dashboard({history,...props}) {
     []
   );
 
+    const updateMyData = () => {
+      //
+    }
 
-  const tableInstance = useTable({columns, data});
+  // custom cell renderer
+  const EditableCell = ({
+    value: initialValue,
+    row: {index},
+    column: {id},
+    updateMyData,
+  }) => {
+    const [value, setValue] = React.useState(initialValue);
+    const onChange = e => {
+      setValue(e.target.value);
+    }
+
+    const onBlur = () => {
+      updateMyData(index, id, value);
+    }
+
+    React.useEffect(() => {
+      setValue(initialValue)
+    }, [initialValue]);
+
+    return <input value={value} onChange={onChange} onBlur={onBlur} />
+  };
+
+  // make custom cell renderer available to cell.render() in DashboardProjectList.js
+  const editableCell = {
+    EditableCell: EditableCell,
+  }
+
+  const tableInstance = useTable({columns, data, editableCell, updateMyData});
   // useTable returns a whole bunch of stuff
   const {
     getTableProps,
@@ -176,12 +207,12 @@ function Dashboard({history,...props}) {
   return (
     <div>
       <div className="projects">
+      <AddProjectBtn open={handleClickOpen}/>
       <Table {...getTableProps()} component={Paper}>
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
         <ProjectList getproject={getProject} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </Table>
       <CreateProjectDialog  open={open} onConfirm={(project) => createProject(project)} onClose={() => handleClose()} />
-      <AddProjectBtn open={handleClickOpen}/>
       </div>
     </div>
   );
