@@ -1,6 +1,6 @@
 import React from 'react';
 import '../../App.css';
-import Logo from './rdf-beatles.png';
+import Logo from '../../img/logo.png';
 import styled from 'styled-components';
 
 const Button = styled.button`
