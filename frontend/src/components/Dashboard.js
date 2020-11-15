@@ -154,11 +154,11 @@ function Dashboard({history,...props}) {
   };
 
   // make custom cell renderer available to cell.render() in DashboardProjectList.js
-  const editableCell = {
+  const defaultColumn = {
     EditableCell: EditableCell,
   }
 
-  const tableInstance = useTable({columns, data, editableCell, updateMyData});
+  const tableInstance = useTable({columns, data, defaultColumn, updateMyData});
   // useTable returns a whole bunch of stuff
   const {
     getTableProps,
