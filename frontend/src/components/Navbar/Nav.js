@@ -76,7 +76,7 @@ export default function Nav() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title} component={Link} to={'/'}>
-            RDF-Highlighter
+            R - Lighter
           </Typography>
           
           <Button component={Link} to={'/Login'} className={classes.button}>Login</Button>
