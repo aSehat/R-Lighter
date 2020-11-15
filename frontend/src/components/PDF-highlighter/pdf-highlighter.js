@@ -6,7 +6,6 @@ import PDFWorker from "worker-loader!pdfjs-dist/lib/pdf.worker";
 import Button from "@material-ui/core/Button";
 import axios from 'axios';
 import { saveAs } from 'file-saver';
-import Cookies from 'js-cookie';
 
 import {
   PdfLoader,
@@ -115,7 +114,7 @@ class PDFHighlights extends Component<Props, State> {
     let headers = {
       'x-auth-token': this.state.token 
     };
-    axios.post('http://localhost:5000/api/annotation', {project_id: this.state.projectId, annotations: this.state.unsavedHighlights}, {headers: headers}).then(res => console.log(res.data));
+    axios.post('/api/annotation', {project_id: this.state.projectId, annotations: this.state.unsavedHighlights}, {headers: headers}).then(res => console.log(res.data));
     this.setState({
       unsavedHighlights: []
     });
@@ -126,7 +125,7 @@ class PDFHighlights extends Component<Props, State> {
     let headers = {
       'x-auth-token': this.state.token 
     };
-    axios.get('http://localhost:5000/api/serialization/'+ this.state.projectId, {headers: headers}).then(res => {
+    axios.get('/api/serialization/'+ this.state.projectId, {headers: headers}).then(res => {
       var content = res.data.rdf;
       // any kind of extension (.txt,.cpp,.cs,.bat)
       var filename = "exportedResources.ttl";
@@ -150,11 +149,11 @@ class PDFHighlights extends Component<Props, State> {
     let headers = {
       'x-auth-token': this.state.token 
     };
-    axios.get('http://localhost:5000/api/project/' + this.state.projectId, {headers: headers}).then(res => {
+    axios.get('/api/project/' + this.state.projectId, {headers: headers}).then(res => {
     console.log(res);  
     this.setState({
         prefix: res.data.project.prefix,
-        url: res.data.project.link,
+        url: "/api/pdf?url=" + res.data.project.link,
         highlights: res.data.annotations,
         resources: res.data.resources,
         classes: ["Class",...res.data.classes] 
@@ -250,7 +249,7 @@ class PDFHighlights extends Component<Props, State> {
         >
           <Button onClick={() => this.save()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Save</Button>
           <Button onClick={() => this.export()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Export Annotations</Button>
-          <PdfLoader url={url} beforeLoad={<Spinner />}>
+          <PdfLoader url={this.state.url} beforeLoad={<Spinner />}>
             {pdfDocument => (
               <PdfHighlighter
                 pdfDocument={pdfDocument}

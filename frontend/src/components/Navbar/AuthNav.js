@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import '../../App.css';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -29,8 +29,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Nav() {
+function Nav({history}) {
   const classes = useStyles();
+
+  const logout = () => {
+    localStorage.clear();
+    history.push("/");
+  }
 
   return (
     <div className ={classes.root}>
@@ -44,9 +49,11 @@ export default function Nav() {
           </Typography>
           
           <Button component={Link} to={'/Dashboard'} className={classes.button}>Dashboard</Button>
-          <Button color="inherit">Logout</Button>
+          <Button color="inherit" onClick={() => logout()}>Logout</Button>
         </Toolbar>
       </AppBar>
     </div>
   );
 };
+
+export default withRouter(Nav);

@@ -5,7 +5,7 @@ import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import { Link, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Signup(props) {
+function Signup({history,...props}) {
     const styles = useStyles();
     const [state , setState] = useState({
         name: "",
@@ -51,7 +51,7 @@ export default function Signup(props) {
             "email": state.email,
             "password": state.password
         }
-        const API_BASE_URL = "http://localhost:5000/api";
+        const API_BASE_URL = "/api";
         axios.post(API_BASE_URL+'/users', payload)
             .then(function (response) {
                 if(response.status === 200){
@@ -59,7 +59,7 @@ export default function Signup(props) {
                         ...prevState,
                         'successMessage' : 'Registration successful. Redirecting to home page..'
                     }))
-                    window.location = "/Dashboard";
+                    history.push("/Dashboard");
                 } else{
                     console.log("Some error occurred");
                 }
@@ -166,3 +166,5 @@ export default function Signup(props) {
         </Container>
     );
 };
+
+export default withRouter(Signup);

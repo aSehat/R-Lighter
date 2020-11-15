@@ -15,7 +15,7 @@ function App() {
       <Router>
         <div className="App">
           <Route path={["/", "/Login", "/Signup"]} exact component={Nav}/>
-          <Route path={["/Dashboard", "project/:id"]} exact component={withAuth(AuthNav)}/>
+          <Route path={["/Dashboard", "/project/:id"]} exact component={withAuth(AuthNav)}/>
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/Login" exact component={Login} />

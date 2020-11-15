@@ -5,8 +5,7 @@ import setAuthToken from '../../utils/setAuthToken';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { Link, Redirect } from 'react-router-dom';
-
+import {withRouter} from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -28,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Login(props) {
+function Login({history ,...props}) {
     const styles = useStyles();
 
     const [state , setState] = useState({
@@ -45,7 +44,6 @@ export default function Login(props) {
     };
 
     const sendDetailsToServer = () => {
-        console.log(null);
         const payload={
             "email": state.email,
             "password": state.password
@@ -61,7 +59,7 @@ export default function Login(props) {
                     }))
                     alert('Login successful. Redirecting to home page...');
                     setAuthToken(response.data.token);
-                    window.location = "/Dashboard";
+                    history.push("/Dashboard");
                 } else{
                     console.log("Some error occurred");
                 }
@@ -131,3 +129,5 @@ export default function Login(props) {
     </Container>
     )
 };
+
+export default withRouter(Login);
