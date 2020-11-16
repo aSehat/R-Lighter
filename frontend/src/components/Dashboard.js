@@ -197,7 +197,7 @@ function Dashboard({history,...props}) {
 
   const getProjectSettings = ((project) => {
     console.log(project);
-    setProjectSettings(project.original);
+    setProjectSettings(project);
   })
 
   useEffect(() => {

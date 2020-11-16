@@ -37,14 +37,14 @@ export default function DashboardProjectList(props) {
                 </TableCell>
               )
             })}
-              <InfoOutlinedIcon
+              {/* <InfoOutlinedIcon
                   className="edit-project"
                   variant="contained"
                   color="primary"
                   onClick={(event) => {event.stopPropagation(); props.getProjectSettings(row)}}
               >
                   Edit
-              </InfoOutlinedIcon>
+              </InfoOutlinedIcon> */}
           </TableRow>
         )
       })}
