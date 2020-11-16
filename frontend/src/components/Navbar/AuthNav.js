@@ -45,7 +45,7 @@ function Nav({history}) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            RDF-Highlighter
+            R - Lighter
           </Typography>
           
           <Button component={Link} to={'/Dashboard'} className={classes.button}>Dashboard</Button>
