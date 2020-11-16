@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useTable } from 'react-table';
+import { makeStyles } from '@material-ui/core/styles';
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
-
+import Button from '@material-ui/core/Button';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 
 
@@ -35,6 +37,14 @@ export default function DashboardProjectList(props) {
                 </TableCell>
               )
             })}
+              <InfoOutlinedIcon
+                  className="edit-project"
+                  variant="contained"
+                  color="primary"
+                  onClick={(event) => {event.stopPropagation(); props.getProjectSettings(row)}}
+              >
+                  Edit
+              </InfoOutlinedIcon>
           </TableRow>
         )
       })}

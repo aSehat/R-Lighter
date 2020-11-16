@@ -7,7 +7,8 @@ import { useTable } from 'react-table';
 import Table from '@material-ui/core/Table';
 import { withRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import CreateProjectDialog from './CreateProjectDialog';
+import ProjectDialog from './ProjectDialog';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 import AddProjectBtn from './layout/AddProjectBtn';
 import './style/Dashboard.css';
@@ -73,7 +74,8 @@ function Dashboard({history,...props}) {
           "name": current.name,
           "link": current.link,
           "language": current.language,
-          "date": current.date
+          "date": current.date,
+          "prefix": current.prefix,
         });
       });
       setProjects(projects_relevant_info);
@@ -88,6 +90,16 @@ function Dashboard({history,...props}) {
     console.log("if only it were that easy");
   };
 
+  const editButton = (row) => {
+    return (<InfoOutlinedIcon
+      className="edit-project"
+      variant="contained"
+      color="primary"
+      onClick={(event) => {event.stopPropagation(); getProjectSettings(row)}}
+  >
+      Edit
+  </InfoOutlinedIcon>);
+  }
 
   // table data
   const data = React.useMemo(
@@ -98,7 +110,9 @@ function Dashboard({history,...props}) {
           "name": current.name,
           "link": current.link,
           "language": current.language,
-          "date": current.date
+          "date": current.date,
+          "prefix": current.prefix,
+          "editButton": editButton(current),
         });
       })
     return projectsList;
@@ -116,11 +130,14 @@ function Dashboard({history,...props}) {
         Header: "Language",
         accessor: "language"
       },{
-        Header: "Date",
+        Header: "Date Created",
         accessor: "date"
       }, {
         Header: "Link",
         accessor: "link"
+      }, {
+        Header: "",
+        accessor: "editButton"
       }
     ],
     []
@@ -131,34 +148,34 @@ function Dashboard({history,...props}) {
     }
 
   // custom cell renderer
-  const EditableCell = ({
-    value: initialValue,
-    row: {index},
-    column: {id},
-    updateMyData,
-  }) => {
-    const [value, setValue] = React.useState(initialValue);
-    const onChange = e => {
-      setValue(e.target.value);
-    }
+  // const EditableCell = ({
+  //   value: initialValue,
+  //   row: {index},
+  //   column: {id},
+  //   updateMyData,
+  // }) => {
+  //   const [value, setValue] = React.useState(initialValue);
+  //   const onChange = e => {
+  //     setValue(e.target.value);
+  //   }
 
-    const onBlur = () => {
-      updateMyData(index, id, value);
-    }
+  //   const onBlur = () => {
+  //     updateMyData(index, id, value);
+  //   }
 
-    React.useEffect(() => {
-      setValue(initialValue)
-    }, [initialValue]);
+  //   React.useEffect(() => {
+  //     setValue(initialValue)
+  //   }, [initialValue]);
 
-    return <input value={value} onChange={onChange} onBlur={onBlur} />
-  };
+  //   return <input value={value} onChange={onChange} onBlur={onBlur} />
+  // };
 
-  // make custom cell renderer available to cell.render() in DashboardProjectList.js
-  const defaultColumn = {
-    EditableCell: EditableCell,
-  }
+  // // make custom cell renderer available to cell.render() in DashboardProjectList.js
+  // const defaultColumn = {
+  //   EditableCell: EditableCell,
+  // }
 
-  const tableInstance = useTable({columns, data, defaultColumn, updateMyData});
+  const tableInstance = useTable({columns, data});
   // useTable returns a whole bunch of stuff
   const {
     getTableProps,
@@ -173,14 +190,37 @@ function Dashboard({history,...props}) {
   }
 
 
-  const [open, setOpen] = React.useState(false);
+  const [openCreate, setOpenCreate] = React.useState(false);
+  const [openUpdate, setOpenUpdate] = React.useState(false);
+  const [projectSettings, setProjectSettings] = React.useState(null);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+
+  const getProjectSettings = ((project) => {
+    console.log(project);
+    setProjectSettings(project.original);
+  })
+
+  useEffect(() => {
+    if (projectSettings) {
+      handleClickOpen("Update");
+    }
+  }, [projectSettings]);
+
+  const handleClickOpen = (type) => {
+    if(type == "Create"){
+      setOpenCreate(true);
+    } else if (type === "Update"){
+      setOpenUpdate(true);
+    }
   };
 
-  const handleClose = (value) => {
-    setOpen(false);
+  const handleClose = (type) => {
+    setProjectSettings(null);
+    if(type == "Create"){
+      setOpenCreate(false);
+    } else if (type === "Update"){
+      setOpenUpdate(false);
+    }
   };
 
   const createProject = async (project) => {
@@ -197,22 +237,16 @@ function Dashboard({history,...props}) {
   // I don't think this is necessary, since a username will never change without a forced logout and redirect
   // const [user, setUser] = useState(() => getUser());
 
-  const handlePopupFunctions = {
-    handleclickopen: handleClickOpen,
-    handleclose: handleClose,
-    open: open,
-    onconfirm: createProject
-  }
-
   return (
     <div>
       <div className="projects">
-      <AddProjectBtn open={handleClickOpen}/>
+      <AddProjectBtn open={() => handleClickOpen("Create")}/>
       <Table {...getTableProps()} component={Paper}>
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
-        <ProjectList getproject={getProject} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
+        <ProjectList getproject={getProject} getProjectSettings={(project) => getProjectSettings(project)} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </Table>
-      <CreateProjectDialog  open={open} onConfirm={(project) => createProject(project)} onClose={() => handleClose()} />
+      <ProjectDialog inputType="Create" open={openCreate} onConfirm={(project) => createProject(project)} onClose={() => handleClose("Create")} />
+      <ProjectDialog inputType="Update" inputProjectFields={projectSettings} open={openUpdate} onConfirm={(project) => createProject(project)} onClose={() => handleClose("Update")} />
       </div>
     </div>
   );
