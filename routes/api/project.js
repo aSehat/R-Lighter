@@ -24,7 +24,7 @@ router.post('/', auth, async (req, res) => {
 
     const projectFields = {};
     projectFields.name = name;
-    if (link) {
+    if (link && !req.body._id){
         projectFields.link = link;
     }
     if (language) {
@@ -37,6 +37,20 @@ router.post('/', auth, async (req, res) => {
     projectFields.owner = req.user.id;
 
     try {
+        if(req.body._id){
+            let project = await Project.findOne({_id: req.body._id});
+
+            if (project) {
+                project = await Project.findOneAndUpdate({
+                    _id: req.body._id
+                }, {
+                    $set: projectFields
+                }, {new: true});
+
+                return res.json(project);
+            }
+        }
+
         project = new Project(projectFields);
 
         await project.save();
@@ -89,7 +103,7 @@ router.get('/', auth, async (req, res) => {
 router.delete('/:project_id', auth, async (req, res) => {
     try {
         await Project.findOneAndRemove({_id: req.params.project_id});
-        
+
         res.json({msg: 'Project Deleted'});
     } catch (err) {
         console.error(err.message);
