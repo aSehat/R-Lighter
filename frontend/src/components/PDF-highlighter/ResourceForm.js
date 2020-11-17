@@ -112,11 +112,11 @@ class ResourceForm extends Component<Props> {
             options={resources}
             getOptionLabel={(option) => option}
             style={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Resource Type" variant="outlined" />}
+            renderInput={(params) => <TextField {...params} label="Resource Type" variant="outlined" required={true} />}
             />
           </div>
           <div className = "field">
-            <TextField value={this.state.resourceName} onChange={this.changeResourceName} label="Resource ID"  style={{ width: 300 }} variant="outlined" />
+            <TextField value={this.state.resourceName} onChange={this.changeResourceName} label="Resource ID"  style={{ width: 300 }} variant="outlined" required={true}/>
           </div>
           <div className = "field">
             <InputLabel id="property-select-label">Property</InputLabel>
@@ -127,6 +127,7 @@ class ResourceForm extends Component<Props> {
               value={this.state.propertyType}
               onChange={this.handleChange}
               style={{ width: 300 }}
+              required={true}
             >
               <MenuItem value={"label"}>rdfs:label</MenuItem>
               <MenuItem value={"description"}>skos:description</MenuItem>

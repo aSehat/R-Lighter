@@ -7,6 +7,8 @@ const Project = require('../../models/Project');
 const Resource = require('../../models/Resource');
 const {createResources} = require('../utils/resources');
 const {updateProjectResourcesAnnotations} = require('../utils/project');
+const {deleteAnnotationsById} = require("../utils/annotation")
+const resources = require('../utils/resources');
 var ObjectId = require('mongodb').ObjectID;
 
 
@@ -21,18 +23,26 @@ router.post('/', auth, async (req, res) => {
 
     const new_annotations = req.body.annotations;
     const project_id = req.body.project_id;
+    const deleted_annotations = req.body.deletedAnnotations;
     console.log(new_annotations);
     console.log(project_id);
 
     try {
-        const annotations = await Annotation.collection.insertMany(new_annotations);
-        const resources = await createResources(annotations.ops); 
-        updateProjectResourcesAnnotations(project_id, annotations.ops, resources);        
-
+        let annotations = [];
+        let resources = [];
+        if(new_annotations.length > 0){
+            annotations = await Annotation.collection.insertMany(new_annotations);
+            resources = await createResources(annotations.ops);  
+            updateProjectResourcesAnnotations(project_id, annotations.ops, resources); 
+        }
+        if(deleted_annotations.length > 0 ){
+            await deleteAnnotationsById(deleted_annotations, project_id); 
+        }
+       
         console.log(resources);      
         res.json({annotations, resources});
     } catch (err) {
-        console.error(err.message);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -50,8 +60,8 @@ router.delete('/', auth, async (req, res) => {
     console.log(del_annotations_object_ids);
 
     try {
-        const annotations_deleted = await Annotation.collection.deleteMany({_id: {$in: del_annotations_object_ids}});
-        // console.log(annotations_deleted);
+        await Annotation.collection.deleteMany({_id: {$in: del_annotations_object_ids}});
+        await Resource.collection.deleteMany({annotation_id: {$in: del_annotations_object_ids}});
         res.json({msg: 'Annotations Deleted'});
     } catch (err) {
         console.error(err.message);

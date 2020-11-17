@@ -100,7 +100,7 @@ class PropertyForm extends Component<Props> {
             options={resources}
             getOptionLabel={(option) => option}
             style={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Resource Instantiation" variant="outlined" />}
+            renderInput={(params) => <TextField {...params} label="Resource Instantiation" variant="outlined" required={true}/>}
             />
           </div>
           <div className = "field">
@@ -112,6 +112,7 @@ class PropertyForm extends Component<Props> {
               value={this.state.propertyType}
               onChange={this.handleChange}
               style={{ width: 300 }}
+              required={true}
             >
               <MenuItem value={"label"}>skos:label</MenuItem>
               <MenuItem value={"description"}>skos:Description</MenuItem>

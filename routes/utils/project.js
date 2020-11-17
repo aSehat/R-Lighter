@@ -23,7 +23,6 @@ const updateProjectResourcesAnnotations = async (projectId, annotations, resourc
             }, {new: true});
             console.log(updatedProject);
         }
-        console.log('successs')
         return Promise.resolve("Success") ;
     } catch (err){
         console.log(err.message)

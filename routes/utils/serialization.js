@@ -2,8 +2,7 @@ const Resource = require('../../models/Resource');
 const Project = require('../../models/Project');
 const N3 = require('n3');
 const { DataFactory, Store } = N3;
-const { namedNode, literal, defaultGraph, quad } = DataFactory;
-
+const { namedNode, literal, quad } = DataFactory;
 
 
 const exportSerialization = async (project, resources, annotations, user) => { 
