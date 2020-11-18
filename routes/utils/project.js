@@ -21,7 +21,6 @@ const updateProjectResourcesAnnotations = async (projectId, annotations, resourc
                     resources : resourceIds
                 }
             }, {new: true});
-            console.log(updatedProject);
         }
         return Promise.resolve("Success") ;
     } catch (err){
@@ -31,5 +30,5 @@ const updateProjectResourcesAnnotations = async (projectId, annotations, resourc
 }
 
 module.exports = {
-    updateProjectResourcesAnnotations
+    updateProjectResourcesAnnotations,
 }

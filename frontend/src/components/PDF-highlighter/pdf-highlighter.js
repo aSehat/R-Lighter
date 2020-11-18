@@ -114,7 +114,7 @@ class PDFHighlights extends Component<Props, State> {
   save = () => {
     const deletedAnnotations = this.state.deletedHighlights.map((h) => h._id)
     const unsavedHighlights = this.state.unsavedHighlights.map((h) => {
-      const { saved, _id, ...rest} = h
+      const { saved, id, _id, ...rest} = h
       return rest;
     })
     console.log(unsavedHighlights);
@@ -156,8 +156,8 @@ class PDFHighlights extends Component<Props, State> {
       'x-auth-token': this.state.token 
     };
     axios.get('/api/project/' + this.state.projectId, {headers: headers}).then(res => {
-    const savedAnnotations = res.data.annotations.map(annotation => {
-      return {...annotation, saved: true}
+    const savedAnnotations = res.data.project.annotations.map(annotation => {
+      return {...annotation, id: annotation._id, saved: true}
     })
     this.setState({
         prefix: res.data.project.prefix,
@@ -223,8 +223,12 @@ class PDFHighlights extends Component<Props, State> {
     const {remainingHighlights, deletedHighlights}= await this.getAllDeleteAnnotations(highlight, this.state.highlights);
     this.setState({
       highlights: remainingHighlights,
-      deletedHighlights: deletedHighlights
+      deletedHighlights: [...deletedHighlights, this.state.deletedHighlights]
     })
+  }
+
+  async editResource(highlight){
+    alert("here!");
   }
 
   addHighlight(highlight: T_NewHighlight) {
@@ -236,11 +240,11 @@ class PDFHighlights extends Component<Props, State> {
     if(highlight.resource.type === "Class" || highlight.resource.type !== "Property"){
       this.createNewResource(highlight)
     }
-    const property = (highlight.resource.property.label === "") ? "description" : "label"
-    const newAnnotation = {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, _id: id, saved: false };
+    const property = resource.propertyType
+    const newAnnotation = {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id, _id: id, saved: false };
     this.setState({
-      unsavedHighlights:[ newAnnotation, ...unsavedHighlights], 
-      highlights: [ newAnnotation, ...highlights],
+      unsavedHighlights:[...unsavedHighlights, newAnnotation], 
+      highlights: [...highlights, newAnnotation],
     }, () => {
       console.log(this.state.highlights);
     });
@@ -320,6 +324,7 @@ class PDFHighlights extends Component<Props, State> {
                     }}
                     classes={this.state.classes}
                     resources={this.state.resources}
+                    highlights={this.state.highlights}
                   />
                 )}
                 highlightTransform={(
