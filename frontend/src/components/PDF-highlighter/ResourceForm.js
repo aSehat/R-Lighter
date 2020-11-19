@@ -37,6 +37,8 @@ class ResourceForm extends Component<Props> {
     this.changeResourceName = this.changeResourceName.bind(this);
     this.changeType = this.changeType.bind(this); 
     this.state = {
+      error: false,
+      errorMessage: "",
       type: "",
       resourceName: "",
       property: {
@@ -90,15 +92,27 @@ class ResourceForm extends Component<Props> {
       onMouseOut,
       onConfirm,
       resources,
+      classes
     } = this.props;
 
 
     return (
       <form
       className="resource-form"
-      onSubmit={event => {
+      onSubmit={(event) => {
         event.preventDefault();
-        onConfirm(this.state);
+        if (resources.includes(this.state.resourceName) || (this.state.type === "Class" && classes.includes(this.state.resourceName))){
+          this.setState({
+            error: true,
+            errorMessage: "Resource name has already been used!"
+          })
+        } else {
+          this.setState({
+            error: false,
+            errorMessage: ""
+          })
+          onConfirm(this.state);
+        }
       }}
     >
           <h3>Create Resource</h3>
@@ -109,14 +123,14 @@ class ResourceForm extends Component<Props> {
             onInputChange={(_, newInputValue) => {
               this.changeType(newInputValue)}}
             id="Resource"
-            options={resources}
+            options={classes}
             getOptionLabel={(option) => option}
             style={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="Resource Type" variant="outlined" required={true} />}
             />
           </div>
           <div className = "field">
-            <TextField value={this.state.resourceName} onChange={this.changeResourceName} label="Resource ID"  style={{ width: 300 }} variant="outlined" required={true}/>
+            <TextField value={this.state.resourceName} error={this.state.error} helperText={this.state.errorMessage} onChange={this.changeResourceName} label="Resource ID"  style={{ width: 300 }} variant="outlined" required={true}/>
           </div>
           <div className = "field">
             <InputLabel id="property-select-label">Property</InputLabel>

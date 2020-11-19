@@ -20,26 +20,31 @@ router.post('/', auth, async (req, res) => {
     if (! errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
-
     const new_annotations = req.body.annotations;
     const project_id = req.body.project_id;
     const deleted_annotations = req.body.deletedAnnotations;
-    console.log(new_annotations);
-    console.log(project_id);
-
     try {
         let annotations = [];
         let resources = [];
         if(new_annotations.length > 0){
             annotations = await Annotation.collection.insertMany(new_annotations);
-            resources = await createResources(annotations.ops);  
-            updateProjectResourcesAnnotations(project_id, annotations.ops, resources); 
+            let resourceAnnotations = [];
+            let propertyAnnotations = [];
+            for(let i = 0; i < annotations.ops.length; i++){
+                if(annotations.ops[i].resource.type === "Property"){
+                    propertyAnnotations.push(annotations.ops[i])
+                }else {
+                    resourceAnnotations.push(annotations.ops[i])
+                }
+            }
+            resources = await createResources(resourceAnnotations, project_id);
+            await updateProjectResourcesAnnotations(project_id, annotations.ops, resources); 
+            await createResources(propertyAnnotations, project_id);  
         }
         if(deleted_annotations.length > 0 ){
             await deleteAnnotationsById(deleted_annotations, project_id); 
         }
-       
-        console.log(resources);      
+          
         res.json({annotations, resources});
     } catch (err) {
         console.error(err);
@@ -57,7 +62,6 @@ router.delete('/', auth, async (req, res) => {
     const del_annotations_object_ids = del_annotation_ids.map((annotation_id) => {
         return ObjectId(annotation_id)
     })
-    console.log(del_annotations_object_ids);
 
     try {
         await Annotation.collection.deleteMany({_id: {$in: del_annotations_object_ids}});

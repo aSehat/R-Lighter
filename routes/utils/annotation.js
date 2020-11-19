@@ -20,7 +20,6 @@ const deleteAnnotationsById = async (annotationIds, projectId) => {
     const delAnnotationsObjectIds = await Promise.all(annotationIds.map((annotation_id) => {
         return Promise.resolve(ObjectId(annotation_id))
     }))
-    console.log("del annotations", delAnnotationsObjectIds);
 
     try {
         if(delAnnotationsObjectIds.length > 0){
@@ -28,7 +27,7 @@ const deleteAnnotationsById = async (annotationIds, projectId) => {
             const delResourceIds = await Promise.all(resources.map((resource) => {return Promise.resolve(resource._id)}));
             await Resource.collection.deleteMany({annotationId: {$in: delAnnotationsObjectIds}});
             await Project.collection.updateMany({_id: ObjectId(projectId)}, {$pull: {"resources": {$in: delResourceIds}}})
-    
+            
             await Annotation.collection.deleteMany({_id: {$in: delAnnotationsObjectIds}});
             await Project.collection.updateMany({_id: ObjectId(projectId)}, {$pull: {"annotations": {$in: delAnnotationsObjectIds}}})
         }
