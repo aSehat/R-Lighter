@@ -29,62 +29,36 @@ const exportResources = async(project, prefix, pdfResourcesUri, projectResources
        else if(propertyType === 'description'){
             store.addQuad(quad(
                 namedNode(resourceUri),
-                namedNode("skos:description"),
+                namedNode("skos:definition"),
                 literal(propertyText, project.language.toLowerCase())
             ));
        }
 
-       if(seenResources[name]){
-        if (type !== 'Property') {
-                    store.addQuad(quad(
-                        namedNode(resourceUri),
-                        namedNode("rdf:type"),
-                        literal(type, project.language.toLowerCase())
-                    ));
-                }
-                store.addQuad(quad(
-                    namedNode(resourceUri),
-                    namedNode("prov:hadPrimarySource"),
-                    namedNode(pdfResourcesUri)
-                    ));
+       if(!seenResources[resourceUri]){
+            store.addQuad(quad(
+                namedNode(resourceUri),
+                namedNode("rdf:type"),
+                literal(type, project.language.toLowerCase())
+            ));
+            store.addQuad(quad(
+                namedNode(resourceUri),
+                namedNode("prov:hadPrimarySource"),
+                namedNode(pdfResourcesUri)
+            ));
+            seenResources[resourceUri] = true;
         }
+
         store.addQuad(
             namedNode(resourceUri),
             namedNode('prov:wasDerivedFrom'),
             namedNode(prefix+"#" +annotation._id)
         );
-
-        if(!seenResources[resourceUri]){
-            seenResources[resourceUri] = true;
-        }
     })
 
     return Promise.resolve()
 }
 
-const exportSerialization = async (project, annotations, user) => { 
-    var prefix = project.prefix;
-    const primarySource = project._id;
-    const store = new N3.Store({ prefixes: 
-        {   //Prefixes goes here
-            
-            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-            "": project.prefix,
-            bibo: 'http://purl.org/ontology/bibo/',
-            dcterms: 'http://purl.org/dc/terms/',
-            foaf: 'http://xmlns.com/foaf/0.1/',
-            "nif-core": 'http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#',
-            owl: 'http://www.w3.org/2002/07/owl#',
-            prov: 'http://www.w3.org/ns/prov#',
-            rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-            skos: 'http://www.w3.org/2004/02/skos/core#',
-            skosxl: 'http://www.w3.org/2008/05/skos-xl#',
-            void: 'http://rdfs.org/ns/void#',
-        }, 
-    });
-    const pdfResourcesUri = prefix + "#" + "00000";
-    const projectResourcesUri = prefix + "#" + primarySource;
-    //Project Resource
+const createProjectResource = async (project, projectResourcesUri, user, store) => {
     store.addQuad(quad(
         namedNode(projectResourcesUri),
         namedNode("dcterms:creator"),
@@ -120,21 +94,12 @@ const exportSerialization = async (project, annotations, user) => {
         namedNode("foaf:name"),
         literal(project.name, project.language),   
     ));
-////////////////////////////////////////////
 
-    store.addQuad(quad(
-        namedNode(pdfResourcesUri),
-        namedNode("dcterms:creator"),
-        namedNode(":"+user.name)
-    ));
-    store.addQuad(quad(
-        namedNode(pdfResourcesUri),
-        namedNode("rdf:type"),
-        namedNode("bibo:Article")
-    )); 
+    return Promise.resolve()
+}
 
-
-    const datasetdefinitionUri = prefix + "#datasetdefinition" 
+const createDatasetResource = async (project, prefix, user, store) => {
+    const datasetdefinitionUri = ":datasetdefinition" 
     store.addQuad(quad(
         namedNode(datasetdefinitionUri),
         namedNode("dcterms:creator"),
@@ -160,9 +125,11 @@ const exportSerialization = async (project, annotations, user) => {
         namedNode("foaf:name"),
         literal(project.name, project.language),   
     ));
-    
-    
-    //Annotations 
+
+    return Promise.resolve()
+}
+
+const createAnnotationResource = async (project, prefix, pdfResourcesUri, annotations, store) => {
     annotations.forEach(element => {
         const id = element._id;
         const text = element.content.text;
@@ -170,7 +137,7 @@ const exportSerialization = async (project, annotations, user) => {
         store.addQuad(quad(
             namedNode(resourceUri),
             namedNode("nif-core:isString"),
-            literal(text, project.language)
+            literal(text)
         ));
         store.addQuad(quad(
             namedNode(resourceUri),
@@ -183,10 +150,65 @@ const exportSerialization = async (project, annotations, user) => {
             namedNode(pdfResourcesUri)
         ));
     });
-    //Resources
 
+    return Promise.resolve();
+}
+
+const createAuthorResource = async(authorId, authorname, store) => {
+    store.addQuad(quad(
+        namedNode(":" + authorId),
+        namedNode("rdf:type"),
+        namedNode("foaf:Person")
+    ));
+    store.addQuad(quad(
+        namedNode(":" + authorId),
+        namedNode("foaf:name"),
+        literal(authorname)
+    ));
+
+    return Promise.resolve();
+}
+
+const exportSerialization = async (project, annotations, user) => { 
+    let prefix = project.prefix;
+    const primarySource = project._id;
+    const store = new N3.Store({ prefixes: 
+        {   //Prefixes goes here
+            
+            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+            "": project.prefix,
+            bibo: 'http://purl.org/ontology/bibo/',
+            dcterms: 'http://purl.org/dc/terms/',
+            foaf: 'http://xmlns.com/foaf/0.1/',
+            "nif-core": 'http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#',
+            owl: 'http://www.w3.org/2002/07/owl#',
+            prov: 'http://www.w3.org/ns/prov#',
+            rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+            skos: 'http://www.w3.org/2004/02/skos/core#',
+            skosxl: 'http://www.w3.org/2008/05/skos-xl#',
+            void: 'http://rdfs.org/ns/void#',
+        }, 
+    });
+    const pdfResourcesUri = prefix + "#" + "00000";
+    const projectResourcesUri = prefix + "#" + primarySource;
+    //Project Resource
+
+    await createProjectResource(project, projectResourcesUri, user, store);
+    store.addQuad(quad(
+        namedNode(pdfResourcesUri),
+        namedNode("dcterms:creator"),
+        namedNode(":"+user.name)
+    ));
+    store.addQuad(quad(
+        namedNode(pdfResourcesUri),
+        namedNode("rdf:type"),
+        namedNode("bibo:Article")
+    )); 
+
+    await createDatasetResource(project, prefix, user, store);
+    await createAnnotationResource(project, prefix, pdfResourcesUri, annotations, store);
     await exportResources(project, prefix, pdfResourcesUri, projectResourcesUri, annotations, user, store);
-
+    await createAuthorResource(user.name.replace(" ", ""), user.name, store);
 
     var output = "";
 
@@ -217,7 +239,6 @@ const exportSerialization = async (project, annotations, user) => {
 
     return Promise.resolve(output);
 }
-
 
 module.exports = {
     exportSerialization
