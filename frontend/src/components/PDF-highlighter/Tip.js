@@ -21,7 +21,8 @@ type Props = {
   onUpdate?: () => void,
   classes: ([]) => void,
   resources: ([]) => void,
-  content: (text: string) => void
+  content: (text: string) => void,
+  highlights: ([]) => void
 };
 
 class Tip extends Component<Props, State> {
@@ -41,14 +42,14 @@ class Tip extends Component<Props, State> {
   }
 
   render() {
-    const { onConfirm, onOpen, classes, resources, content } = this.props;
+    const { onConfirm, onOpen, classes, resources, content, highlights } = this.props;
     const { compact, type } = this.state;
 
     const renderForm = () => {
         if(type === "resource"){
-            return <ResourceForm onConfirm={onConfirm} content={content} resources={classes}/>
+            return <ResourceForm onConfirm={onConfirm} content={content} classes={classes} resources={resources}/>
         } else if(type === "property"){
-            return <PropertyForm onConfirm={onConfirm} content={content} resources={resources}/>
+            return <PropertyForm onConfirm={onConfirm} content={content} resources={resources} highlights={highlights}/>
         } else {
             return <h1>ERROR</h1>
         }
