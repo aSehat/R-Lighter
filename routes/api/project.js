@@ -58,7 +58,7 @@ router.get('/:project_id', auth, async (req, res) => {
         if (! project) {
             return res.status(400).json({msg: 'Project not found'});
         }
-        const {resources, classes} = await getResourceNamesById(project.resources);
+        const {resources, classes} = await getResourceNamesById(project.annotations);
         res.json({project, resources, classes});
     } catch (err) {
         if (err.kind == 'ObjectId') {

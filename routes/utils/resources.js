@@ -13,22 +13,21 @@ const getResourcesById = async (resourceIds) => {
     } 
 }
 
-const getResourceNamesById = async (resourceObjects) => {
+const getResourceNamesById = async (annotations) => {
     try{
-        let resources = [];
-        let classes = []; 
-        
-        resourceObjects.forEach(resource => {
-            if(resource.class === "Class"){
-                classes.push(resource.name);
-            } else if(resource.name) {
-                resources.push(resource.name);
+        let resources = new Set();
+        let classes = new Set(); 
+        console.log(annotations);
+        annotations.forEach(annotation => {
+            if(annotation.resource.type === "Class"){
+                classes.add(annotation.resource.resourceName);
+            } else {
+                resources.add(annotation.resource.resourceName);
             }
         })
-
-        return Promise.resolve({resources, classes});
+        return Promise.resolve({resources: [...resources], classes: [...classes]});
     }catch (err){
-        console.log(err.message);
+        console.log(err);
         return Promise.reject("Server Error");
     } 
 }

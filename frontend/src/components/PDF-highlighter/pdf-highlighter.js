@@ -114,7 +114,7 @@ class PDFHighlights extends Component<Props, State> {
   save = () => {
     const deletedAnnotations = this.state.deletedHighlights.map((h) => h._id)
     const unsavedHighlights = this.state.unsavedHighlights.map((h) => {
-      const { saved, id, _id, ...rest} = h
+      const { saved, id, ...rest} = h
       return rest;
     })
     console.log(unsavedHighlights);
@@ -223,7 +223,7 @@ class PDFHighlights extends Component<Props, State> {
     const {remainingHighlights, deletedHighlights}= await this.getAllDeleteAnnotations(highlight, this.state.highlights);
     this.setState({
       highlights: remainingHighlights,
-      deletedHighlights: [...deletedHighlights, this.state.deletedHighlights]
+      deletedHighlights: [...this.state.deletedHighlights, ...deletedHighlights]
     })
   }
 
@@ -241,7 +241,7 @@ class PDFHighlights extends Component<Props, State> {
       this.createNewResource(highlight)
     }
     const property = resource.propertyType
-    const newAnnotation = {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id, _id: id, saved: false };
+    const newAnnotation = {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id, saved: false };
     this.setState({
       unsavedHighlights:[...unsavedHighlights, newAnnotation], 
       highlights: [...highlights, newAnnotation],
