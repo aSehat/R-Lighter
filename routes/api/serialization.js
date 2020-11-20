@@ -13,7 +13,7 @@ router.get('/:project_id', auth, async (req, res) => {
     try {
 
         const project = await Project.findOne({_id: req.params.project_id});
-        const annotations =  await getAnnotationsById(project.annotations);
+        const annotations =  project.annotations;
         const user = await getUserById(project.owner);
         const rdf = await exportSerialization(project, annotations, user);
         
