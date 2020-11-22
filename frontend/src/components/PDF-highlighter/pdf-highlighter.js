@@ -7,6 +7,9 @@ import Button from "@material-ui/core/Button";
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 
+import SaveBtn from '../layout/SaveBtn';
+import ExportAnnotBtn from '../layout/ExportAnnotBtn';
+
 import {
   PdfLoader,
   PdfHighlighter,
@@ -249,6 +252,11 @@ class PDFHighlights extends Component<Props, State> {
         >
           <Button onClick={() => this.save()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Save</Button>
           <Button onClick={() => this.export()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Export Annotations</Button>
+          <div>
+            <SaveBtn />
+            <br/>
+            <ExportAnnotBtn />
+          </div>
           <PdfLoader url={this.state.url} beforeLoad={<Spinner />}>
             {pdfDocument => (
               <PdfHighlighter
