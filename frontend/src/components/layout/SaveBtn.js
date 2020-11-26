@@ -6,6 +6,7 @@ import SaveIcon from '@material-ui/icons/Save';
 
 const useStyles = makeStyles((theme) => ({
   fab: {
+    zIndex: 5,
     position: 'absolute',
     bottom: theme.spacing(12),
     right: theme.spacing(3),

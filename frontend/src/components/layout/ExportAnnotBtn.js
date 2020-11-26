@@ -6,6 +6,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const useStyles = makeStyles((theme) => ({
   fab: {
+    zIndex: 5,
     position: 'absolute',
     bottom: theme.spacing(20),
     right: theme.spacing(3),

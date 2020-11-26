@@ -9,6 +9,7 @@ import { saveAs } from 'file-saver';
 
 import SaveBtn from '../layout/SaveBtn';
 import ExportAnnotBtn from '../layout/ExportAnnotBtn';
+import BibTex from '../layout/BibTex';
 
 import {
   PdfLoader,
@@ -256,6 +257,8 @@ class PDFHighlights extends Component<Props, State> {
             <SaveBtn />
             <br/>
             <ExportAnnotBtn />
+            <br/>
+            <BibTex />
           </div>
           <PdfLoader url={this.state.url} beforeLoad={<Spinner />}>
             {pdfDocument => (
