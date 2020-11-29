@@ -21,7 +21,7 @@ const SaveAnnotBtn = (props) => {
       <Fab 
         href='#'
         color="primary" aria-label="export" className={classes.margin, classes.fab}  
-        onClick={() => this.export()}>
+        onClick={() => props.onClick()}>
         <ExitToAppIcon />
       </Fab>
     </div>

@@ -11,6 +11,10 @@ const ProjectSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'user'
     },
+    bibtex: {
+        type: String,
+        default: ""
+    },
     users: [
         {
             type: Schema.Types.ObjectId,

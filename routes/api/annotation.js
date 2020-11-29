@@ -13,49 +13,6 @@ const project = require('../utils/project');
 var ObjectId = require('mongodb').ObjectID;
 
 
-// @route       POST api/annotation
-// @desc        update annotations
-// @access      Private
-
-// router.post('/', auth, async (req, res) => {
-//     const errors = validationResult(req);
-//     if (! errors.isEmpty()) {
-//         return res.status(400).json({errors: errors.array()});
-//     }
-//     const new_annotations = req.body.annotations;
-//     const project_id = req.body.project_id;
-//     const deleted_annotations = req.body.deletedAnnotations;
-//     try {
-//         let annotations = [];
-//         let resources = [];
-//         if(new_annotations.length > 0){
-            
-//             annotations = await Annotation.collection.insertMany(new_annotations);
-
-//             let resourceAnnotations = [];
-//             let propertyAnnotations = [];
-//             for(let i = 0; i < annotations.ops.length; i++){
-//                 if(annotations.ops[i].resource.type === "Property"){
-//                     propertyAnnotations.push(annotations.ops[i])
-//                 }else {
-//                     resourceAnnotations.push(annotations.ops[i])
-//                 }
-//             }
-//             resources = await createResources(resourceAnnotations, project_id);
-//             await updateProjectResourcesAnnotations(project_id, annotations.ops, resources); 
-//             await createResources(propertyAnnotations, project_id);  
-//         }
-//         if(deleted_annotations.length > 0 ){
-//             await deleteAnnotationsById(deleted_annotations, project_id); 
-//         }
-          
-//         res.json({annotations, resources});
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send('Server Error');
-//     }
-// }); 
-
 router.post('/', auth, async (req, res) => {
     const errors = validationResult(req);
     if (! errors.isEmpty()) {
@@ -63,7 +20,16 @@ router.post('/', auth, async (req, res) => {
     }
     const annotations = req.body.annotations;
     const project_id = req.body.project_id;
+    const bibtex = req.body.bibtex;
     const deleted_annotations = req.body.deletedAnnotations;
+
+    if(bibtex){
+        await Project.findOneAndUpdate({
+            _id: ObjectId(project_id)
+        }, {
+            $set: {bibtex: bibtex}
+        }, {new: true});
+    }
     if(deleted_annotations.length > 0 ){
         await deleteAnnotationsById(deleted_annotations, project_id); 
     }

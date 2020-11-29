@@ -126,7 +126,7 @@ function Sidebar({ highlights, resources, classes, toggleDocument, resetHighligh
           >
             <div>
               <DeleteIcon id={highlight.id} className={styleclasses.deleteResource} onClick={() => deleteHighlight(highlight)}/>
-              <EditIcon className={styleclasses.deleteResource} onClick={() => editHighlight(highlight)}/>
+              {/* <EditIcon className={styleclasses.deleteResource} onClick={() => editHighlight(highlight)}/> */}
           <strong>{highlight.resource.type} {highlight.resource.resourceName}</strong>
               {highlight.resource ? (
                 <blockquote style={{ marginTop: "0.5rem" }}>

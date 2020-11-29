@@ -20,8 +20,9 @@ const SaveBtn = (props) => {
     <div>
       <Fab 
         href='#'
-        color="primary" aria-label="save" className={classes.margin, classes.fab}  
-        onClick={() => this.save()}>
+        color="primary" aria-label="save" className={classes.margin, classes.fab}
+        onClick={() => props.onClick()}  
+      >
         <SaveIcon />
       </Fab>
     </div>

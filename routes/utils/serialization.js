@@ -3,6 +3,12 @@ const Project = require('../../models/Project');
 const N3 = require('n3');
 const { DataFactory, Store } = N3;
 const { namedNode, literal, quad } = DataFactory;
+const moment = require('moment');
+const bibtexParser = require('bibtex-parse');
+
+String.prototype.toProperCase = function () {
+    return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+};
 
 const exportResources = async(project, prefix, pdfResourcesUri, projectResourcesUri, annotations, user, store) => {
     var seenResources = {};
@@ -56,6 +62,181 @@ const exportResources = async(project, prefix, pdfResourcesUri, projectResources
     })
 
     return Promise.resolve()
+}
+
+const createPDFResource = async (pdf, prefix, language, mainpdfUri, store) => {
+    var i = 0;
+    pdf.forEach(async citation => {
+        let pdfUri = mainpdfUri
+        if (i > 0){
+            pdfUri = prefix + "#" +  String(Math.random()).slice(2)
+        }
+        for(const attribute in citation){
+            if(attribute === 'AUTHOR'){
+                const author = citation.AUTHOR
+                const authorid = author.split(". ").join("").toLowerCase()
+                await createAuthorResource(authorid, author, store);
+                store.addQuad(quad(
+                    namedNode(pdfUri),
+                    namedNode("dcterms:creator"),
+                    namedNode(":"+authorid)
+                ))
+            }
+            else if(attribute === 'TITLE'){
+                store.addQuad(quad(
+                    namedNode(pdfUri),
+                    namedNode("dcterms:title"),
+                    literal(citation.TITLE, language)
+                ))
+            }
+            else if(attribute === 'PAGES'){
+                multiplePagesIndex = citation.PAGES.search("--")
+                if(multiplePagesIndex != -1){
+                    const pageStart = citation.PAGES.slice(0, multiplePagesIndex);
+                    const pageEnd = citation.PAGES.slice(multiplePagesIndex + 2);
+                    store.addQuad(quad(
+                        namedNode(pdfUri),
+                        namedNode("bibo:pageStart"),
+                        literal(pageStart)
+                    ))
+                    store.addQuad(quad(
+                        namedNode(pdfUri),
+                        namedNode("bibo:pageEnd"),
+                        literal(pageEnd)
+                    ))
+                }else{
+                    store.addQuad(quad(
+                        namedNode(pdfUri),
+                        namedNode("bibo:pages"),
+                        literal(citation.PAGES)
+                    ))
+                }
+            }
+            else if(attribute === 'VOLUME'){
+                store.addQuad(quad(
+                    namedNode(pdfUri),
+                    namedNode("bibo:volume"),
+                    literal(citation.VOLUME)
+                ))
+            }
+            else if(attribute === 'JOURNAL'){
+                const journalId = ":j" + String(Math.random()).slice(2)
+                store.addQuad(quad(
+                    namedNode(journalId),
+                    namedNode("dcterms:title"),
+                    literal(citation.JOURNAL, language)
+                ))
+                store.addQuad(quad(
+                    namedNode(journalId),
+                    namedNode("rdf:type"),
+                    namedNode("bibo:Journal")
+                ))
+                store.addQuad(quad(
+                    namedNode(pdfUri),
+                    namedNode("dcterms:isPartOf"),
+                    namedNode(journalId)
+                ))
+            }
+            else if(attribute === 'YEAR'){
+                const year = citation.YEAR
+                let month = 1
+                let day = 1
+                let datetimeString = "YYYY"
+                const months = {
+                    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6, "jul": 7,"aug": 8,"sep": 9,"oct": 10,"nov": 11,"dec": 12,
+                    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6, "july": 7,"august": 8,"september": 9,"october": 10,"november": 11,"december": 12
+                }
+                if(citation.MONTH){
+                    month = citation.MONTH
+                    datetimeString = "YYYY MM"
+                    if(!Number.isInteger(month)){
+                        month = months[citation.MONTH.toLowerCase()]
+                    }else {
+                        month = Number.parseInt(month)
+                    }
+                    if(citation.DAY){
+                        datetimeString = "YYYY-MM-DD"
+                        day = Number.parseInt(citation.DAY)
+                    }
+                }
+                const dateobject = new Date(Number.parseInt(year), month - 1, day)
+                const date = moment(dateobject.toISOString())
+                const dateString = date.format(datetimeString)
+                store.addQuad(quad(
+                    namedNode(pdfUri),
+                    namedNode("dcterms:date"),
+                    literal(dateString)
+                ))   
+            }
+            else if(attribute === 'PUBLISHER'){
+                store.addQuad(quad(
+                    namedNode(pdfUri),
+                    namedNode("dcterms:publisher"),
+                    literal(citation.PUBLISHER)
+                ))  
+            }
+            else if(attribute === 'type'){
+                var pdftype = "Article"
+                switch(citation.type){
+                    case "article":
+                        pdftype = "Article"
+                        break;
+                    case "book":
+                        pdftype = "Book"
+                        break;
+                    case "booklet":
+                        pdftype = "Book"
+                        break;
+                    case "inbook":
+                        pdftype = "BookSection"
+                        break;
+                    case "incollection":
+                        pdftype = "BookSection"
+                        break;
+                    case "inproceedings":
+                        pdftype = "BookSection"
+                        break;
+                    case "proceedings":
+                        pdftype = "Proceedings";
+                        break;
+                    case "manual":
+                        pdftype = "Manual"
+                        break;
+                    case "masterthesis":
+                        pdftype = "Thesis"
+                        break;
+                    case "phdthesis":
+                        pdftype = "Thesis"
+                        break;
+                    case "techreport":
+                        pdftype = "Report"
+                        break;
+                    case "unpublished":
+                        pdftype = "Manuscript"
+                        break;
+                    default:
+                        pdftype = "Document"
+                }
+                store.addQuad(quad(
+                    namedNode(pdfUri),
+                    namedNode("rdf:type"),
+                    namedNode("bibo:" + pdftype)
+                ))  
+            }
+            else if(attribute === 'NUMBER'){
+                store.addQuad(quad(namedNode(pdfUri), namedNode("bibo:locator"), literal(citation.NUMBER)))
+            } 
+            else if(attribute !== 'MONTH' && attribute !== 'DAY' && attribute !== 'key'){
+                store.addQuad(quad(
+                    namedNode(pdfUri),
+                    namedNode("bibo:" + attribute.toLowerCase().toProperCase()),
+                    literal(citation[attribute])
+                ))  
+            }
+        }
+        i += 1;
+    })
+    return Promise.resolve();
 }
 
 const createProjectResource = async (project, projectResourcesUri, user, store) => {
@@ -171,6 +352,7 @@ const createAuthorResource = async(authorId, authorname, store) => {
 
 const exportSerialization = async (project, annotations, user) => { 
     let prefix = project.prefix;
+    let pdf = bibtexParser.entries(project.bibtex);
     const primarySource = project._id;
     const store = new N3.Store({ prefixes: 
         {   //Prefixes goes here
@@ -192,19 +374,21 @@ const exportSerialization = async (project, annotations, user) => {
     const pdfResourcesUri = prefix + "#" + "00000";
     const projectResourcesUri = prefix + "#" + primarySource;
     //Project Resource
-
     await createProjectResource(project, projectResourcesUri, user, store);
-    store.addQuad(quad(
-        namedNode(pdfResourcesUri),
-        namedNode("dcterms:creator"),
-        namedNode(":"+user.name)
-    ));
-    store.addQuad(quad(
-        namedNode(pdfResourcesUri),
-        namedNode("rdf:type"),
-        namedNode("bibo:Article")
-    )); 
-
+    if(pdf.length > 0){
+        await createPDFResource(pdf, prefix, project.language, pdfResourcesUri, store);
+    }else{
+        store.addQuad(quad(
+            namedNode(pdfResourcesUri),
+            namedNode("dcterms:creator"),
+            namedNode(":"+user.name)
+        ));
+        store.addQuad(quad(
+            namedNode(pdfResourcesUri),
+            namedNode("rdf:type"),
+            namedNode("bibo:Article")
+        )); 
+    }
     await createDatasetResource(project, prefix, user, store);
     await createAnnotationResource(project, prefix, pdfResourcesUri, annotations, store);
     await exportResources(project, prefix, pdfResourcesUri, projectResourcesUri, annotations, user, store);
@@ -235,8 +419,6 @@ const exportSerialization = async (project, annotations, user) => {
         writer.addQuad(quad);
     })
     writer.end((error, result) => output = result);
-    console.log(output);
-
     return Promise.resolve(output);
 }
 
