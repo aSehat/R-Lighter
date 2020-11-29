@@ -81,6 +81,7 @@ class PDFHighlights extends Component<Props, State> {
     token: localStorage.getItem("token"),
     url: "",
     unsavedHighlights: [],
+    deletedHighlights: [],
     highlights: [],
     classes: ["Class"],
     resources: []
@@ -115,10 +116,16 @@ class PDFHighlights extends Component<Props, State> {
   };
 
   save = () => {
+    const deletedAnnotations = this.state.deletedHighlights.map((h) => h._id)
+    const unsavedHighlights = this.state.unsavedHighlights.map((h) => {
+      const { saved, id, ...rest} = h
+      return rest;
+    })
+    console.log(unsavedHighlights);
     let headers = {
       'x-auth-token': this.state.token 
     };
-    axios.post('/api/annotation', {project_id: this.state.projectId, annotations: this.state.unsavedHighlights}, {headers: headers}).then(res => console.log(res.data));
+    axios.post('/api/annotation', {project_id: this.state.projectId, annotations: unsavedHighlights, deletedAnnotations: deletedAnnotations}, {headers: headers}).then(res => console.log(res.data));
     this.setState({
       unsavedHighlights: []
     });
@@ -131,7 +138,6 @@ class PDFHighlights extends Component<Props, State> {
     };
     axios.get('/api/serialization/'+ this.state.projectId, {headers: headers}).then(res => {
       var content = res.data.rdf;
-      // any kind of extension (.txt,.cpp,.cs,.bat)
       var filename = "exportedResources.ttl";
   
       var blob = new Blob([content], {
@@ -154,11 +160,13 @@ class PDFHighlights extends Component<Props, State> {
       'x-auth-token': this.state.token 
     };
     axios.get('/api/project/' + this.state.projectId, {headers: headers}).then(res => {
-    console.log(res);  
+    const savedAnnotations = res.data.project.annotations.map(annotation => {
+      return {...annotation, id: annotation._id, saved: true}
+    })
     this.setState({
         prefix: res.data.project.prefix,
         url: "/api/pdf?url=" + res.data.project.link,
-        highlights: res.data.annotations,
+        highlights: savedAnnotations,
         resources: res.data.resources,
         classes: ["Class",...res.data.classes] 
       })
@@ -187,7 +195,45 @@ class PDFHighlights extends Component<Props, State> {
     }
   }
 
+  async getAllDeleteAnnotations(highlight, highlights){ //returns all REMAINING HIGHLIGHTS
+    if(highlight.resource.type === "Property" || highlight.resource.type === ""){
+      return Promise.resolve(
+        {
+          remainingHighlights: highlights.filter((h) => h.id != highlight.id),
+          deletedHighlights: highlight.saved ? [highlight] : []
+        }
+      ); 
+    }
+    var remainingHighlights = [];
+    var childrenHighlights = [];
+    var deletedHighlights = [];
+    highlights.forEach((h) => {
+      if (h.id !== highlight.id && (h.resource.type === highlight.resource.resourceName || h.resource.resourceName === highlight.resource.resourceName)){
+        childrenHighlights.push(h);
+      } else if (h.id !== highlight.id){
+        remainingHighlights.push(h);
+      }
+    })
+    for(let i = 0; i < childrenHighlights.length; i++){
+      let result = await this.getAllDeleteAnnotations(childrenHighlights[i], remainingHighlights);
+      remainingHighlights = result.remainingHighlights;
+      deletedHighlights = deletedHighlights.concat(result.deletedHighlights);
+    }
+    deletedHighlights = highlight.saved ? [highlight, ...deletedHighlights] : [...deletedHighlights]
+    return Promise.resolve({remainingHighlights, deletedHighlights});  
+  }
 
+  async deleteResource(highlight){
+    const {remainingHighlights, deletedHighlights}= await this.getAllDeleteAnnotations(highlight, this.state.highlights);
+    this.setState({
+      highlights: remainingHighlights,
+      deletedHighlights: [...this.state.deletedHighlights, ...deletedHighlights]
+    })
+  }
+
+  async editResource(highlight){
+    alert("here!");
+  }
 
   addHighlight(highlight: T_NewHighlight) {
     const { highlights, unsavedHighlights } = this.state;
@@ -198,10 +244,11 @@ class PDFHighlights extends Component<Props, State> {
     if(highlight.resource.type === "Class" || highlight.resource.type !== "Property"){
       this.createNewResource(highlight)
     }
-    const property = (highlight.resource.property.label === "") ? "description" : "label"
+    const property = resource.propertyType
+    const newAnnotation = {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id, saved: false };
     this.setState({
-      unsavedHighlights:[ {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id }, ...unsavedHighlights], 
-      highlights: [ {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id }, ...highlights],
+      unsavedHighlights:[...unsavedHighlights, newAnnotation], 
+      highlights: [...highlights, newAnnotation],
     }, () => {
       console.log(this.state.highlights);
     });
@@ -243,6 +290,7 @@ class PDFHighlights extends Component<Props, State> {
           classes={this.state.classes}
           resetHighlights={this.resetHighlights}
           toggleDocument={this.toggleDocument}
+          deleteResource={(highlight) => this.deleteResource(highlight)}
         />
         <div
           style={{
@@ -287,6 +335,7 @@ class PDFHighlights extends Component<Props, State> {
                     }}
                     classes={this.state.classes}
                     resources={this.state.resources}
+                    highlights={this.state.highlights}
                   />
                 )}
                 highlightTransform={(

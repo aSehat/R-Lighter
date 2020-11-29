@@ -16,8 +16,11 @@ const useStyles = makeStyles({
 
 export default function CreateProjectDialog(props) {
   const classes = useStyles();
-  const { onClose, selectedValue, open } = props;
+  const { onClose, selectedValue, inputprojectFields, open } = props;
   const [projectFields, setProjectFields] = React.useState(() => {
+    if (inputprojectFields){
+      return inputprojectFields
+    }
     return {
       name: "",
       link: "",

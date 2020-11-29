@@ -2,9 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ResourceSchema = new mongoose.Schema({
-    annotationId: {
+    annotationId: [{
         type: Schema.Types.ObjectId,
         ref: 'annotation'
+    }],
+    projectId: {
+        type: Schema.Types.ObjectId,
+        ref: 'project'
     },
     class: {
         type: String

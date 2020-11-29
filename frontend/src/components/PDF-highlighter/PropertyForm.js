@@ -9,6 +9,7 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Button from '@material-ui/core/Button';
 
 import type { T_LTWH } from "../types.js";
@@ -35,6 +36,8 @@ class PropertyForm extends Component<Props> {
     this.handleChange = this.handleChange.bind(this);
     this.changeInstantiation = this.changeInstantiation.bind(this); 
     this.state = {
+      error: false,
+      errorMessage: "",
       type: "Property",
       resourceName: "",
       property: {
@@ -79,6 +82,7 @@ class PropertyForm extends Component<Props> {
     const {
       onConfirm,
       resources,
+      highlights
     } = this.props;
 
 
@@ -87,7 +91,19 @@ class PropertyForm extends Component<Props> {
       className="form"
       onSubmit={event => {
         event.preventDefault();
-        onConfirm(this.state);
+        const unusedProperty = highlights.filter((h) => {return h.resource.resourceName === this.state.resourceName && h.resource.property.label === this.state.propertyType})
+        if(unusedProperty.length > 0){
+          this.setState({
+            error: true,
+            errorMessage: "Property is already defined for the specified resource"
+          })
+        }else {
+          this.setState({
+            error: false,
+            errorMessage: ""
+          })
+          onConfirm(this.state);
+        }
       }}
     >
           <h3>Create Property</h3>
@@ -100,22 +116,25 @@ class PropertyForm extends Component<Props> {
             options={resources}
             getOptionLabel={(option) => option}
             style={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Resource Instantiation" variant="outlined" />}
+            renderInput={(params) => <TextField {...params} label="Resource Instantiation" variant="outlined" required={true}/>}
             />
           </div>
           <div className = "field">
             <InputLabel id="property-select-label">Property</InputLabel>
             <FormControl className="formControl">
             <Select
+              error={this.state.error}
               labelId="property-select-label"
               id="propety-select"
               value={this.state.propertyType}
               onChange={this.handleChange}
               style={{ width: 300 }}
+              required={true}
             >
-              <MenuItem value={"label"}>skos:label</MenuItem>
-              <MenuItem value={"description"}>skos:Description</MenuItem>
+              <MenuItem value={"label"}>rdfs:label</MenuItem>
+              <MenuItem value={"description"}>skos:description</MenuItem>
             </Select>
+            <FormHelperText error={this.state.error}>{this.state.errorMessage}</FormHelperText>
           </FormControl>
           <div class="field">
               <Button
