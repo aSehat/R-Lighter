@@ -15,7 +15,6 @@ import './style/Dashboard.css';
 // this function will be an axios call to one of the routes
 // TODO: what is the max number of documents that the database will return?
 const getProjects = (async () => {
-  //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
   let headers = {
     'x-auth-token': localStorage.getItem("token")
   };
@@ -44,7 +43,8 @@ function getUser() {
 }
 
 
-// TODO: implementation of infinite scroll
+// TODO: infinite scroll or pagination? i'm leaning towards pagination, unless I can figure out what to do about
+//  the number of event handlers on the page
 function dynamicLoad(setProjects) {
   //
 }
@@ -226,13 +226,18 @@ function Dashboard({history,...props}) {
   const createProject = async (project) => {
     const headers = {
       "x-auth-token": localStorage.getItem("token")
-    }
+    };
     const result = await axios.post('/api/project', project, {headers: headers}).then(res => {
-      return res.data
-    })
-    return result;
-  }
+      return res.data;
+    });
+    history.push("/project/" + result._id);
+  };
 
+  // TODO: to update the table without calling the db again, i need the index of the row that just got deleted
+  //  if pagination stores the entire table in memory all the time, then (row_num*page_num-1)+row_num == index of projects array?
+  //    infinite scroll would also probably use the above formula
+  //  if pagination does NOT store the entire table in memory all the time, then row_num == index of projects array?
+  // once I have that index, I can call projects.delete (or whatever the array method is called) and the table should automatically update
   const deleteProject = async (project) => {
     const options = {
       headers: {"x-auth-token": localStorage.getItem("token")}
