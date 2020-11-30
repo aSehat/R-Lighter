@@ -227,10 +227,20 @@ function Dashboard({history,...props}) {
     const headers = {
       "x-auth-token": localStorage.getItem("token")
     }
-    //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
     const result = await axios.post('/api/project', project, {headers: headers}).then(res => {
       return res.data
     })
+    return result;
+  }
+
+  const deleteProject = async (project) => {
+    const options = {
+      headers: {"x-auth-token": localStorage.getItem("token")}
+    }
+    const result = await axios.delete('/api/project/'+project._id, options).then(res => {
+      console.log(res.data);
+      return res.data;
+    });
     return result;
   }
 
@@ -246,7 +256,7 @@ function Dashboard({history,...props}) {
         <ProjectList getproject={getProject} getProjectSettings={(project) => getProjectSettings(project)} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </Table>
       <ProjectDialog inputType="Create" open={openCreate} onConfirm={(project) => createProject(project)} onClose={() => handleClose("Create")} />
-      <ProjectDialog inputType="Update" inputProjectFields={projectSettings} open={openUpdate} onConfirm={(project) => createProject(project)} onClose={() => handleClose("Update")} />
+      <ProjectDialog inputType="Update" inputProjectFields={projectSettings} open={openUpdate} onDelete={(project) => deleteProject(project)} onConfirm={(project) => createProject(project)} onClose={() => handleClose("Update")} />
       </div>
     </div>
   );

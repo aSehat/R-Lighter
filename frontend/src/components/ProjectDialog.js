@@ -28,7 +28,7 @@ export default function ProjectDialog(props) {
       name: "",
       link: "",
       prefix: "",
-      lang: "en"
+      language: "en"
     }
   });
 
@@ -68,18 +68,18 @@ export default function ProjectDialog(props) {
       }}
     >
           <div className = "field">
-          <TextField value={projectFields.name} onChange={(e) => changeFormValue(e, "name")} label="Project Name"  style={{ width: 300 }} variant="outlined" required={true} />
+          <TextField value={projectFields.name} onChange={(e) => changeFormValue(e, "name")} label="Project Name"  style={{ width: 333.89 }} variant="outlined" required={true} />
           </div>
           {(inputType === "Create") &&
           <div className = "field">
-            <TextField value={projectFields.link} onChange={(e) => changeFormValue(e, "link")} label="Project Link"  style={{ width: 300 }} variant="outlined" required={true}/>
+            <TextField value={projectFields.link} onChange={(e) => changeFormValue(e, "link")} label="Project Link"  style={{ width: 333.89 }} variant="outlined" required={true}/>
           </div>
           }
           <div className = "field">
-          <TextField value={projectFields.lang} onChange={(e) => changeFormValue(e, "lang")} label="Project Language"  style={{ width: 300 }} variant="outlined" required={true}/>
+          <TextField value={projectFields.language} onChange={(e) => changeFormValue(e, "language")} label="Project Language"  style={{ width: 333.89 }} variant="outlined" required={true}/>
           </div>
           <div className = "field">
-          <TextField value={projectFields.prefix} onChange={(e) => changeFormValue(e, "prefix")} label="Project Prefix"  style={{ width: 300 }} variant="outlined" required={true}/>
+          <TextField value={projectFields.prefix} onChange={(e) => changeFormValue(e, "prefix")} label="Project Prefix"  style={{ width: 333.89 }} variant="outlined" required={true}/>
             <div class="field">
               <Button
                   type="submit"
@@ -89,6 +89,27 @@ export default function ProjectDialog(props) {
               >
                   {inputType} Project
               </Button>
+              {(inputType === "Update") &&
+                <Button
+                    style={{"margin-left": "10px"}}
+                    className="create-resource"
+                    variant="contained"
+                    color="secondary"
+                    onClick={(e) => {
+                      handleClose();
+                      if (window.confirm("Delete this project? (THIS ACTION CANNOT BE UNDONE)")) {
+                        // delete the project
+                        alert("project deleted!");
+                        props.onDelete(projectFields);
+                      } else {
+                        // do nothing
+                        alert("no deletion took place :)");
+                      }
+                    }}
+                >
+                  Delete Project
+                </Button>
+              }
             </div>
           </div>
         </form>
