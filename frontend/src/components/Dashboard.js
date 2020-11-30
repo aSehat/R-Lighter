@@ -233,10 +233,10 @@ function Dashboard({history,...props}) {
     history.push("/project/" + result._id);
   };
 
-  // TODO: to update the table without calling the db again, i need the index of the row that just got deleted
-  //  if pagination stores the entire table in memory all the time, then (row_num*page_num-1)+row_num == index of projects array?
-  //    infinite scroll would also probably use the above formula
-  //  if pagination does NOT store the entire table in memory all the time, then row_num == index of projects array?
+  // TODO: to update the table without calling the db again, i need the index (in the projects array) of the row that just got deleted
+  //  if pagination stores the entire table in memory all the time, then (max_rows_per_page*page_num-1)+row_num == index in projects array
+  //  if pagination does NOT store the entire table in memory all the time, then row_num == index in projects array?
+  //    the above formula is also probably true for infinite scroll
   // once I have that index, I can call projects.delete (or whatever the array method is called) and the table should automatically update
   const deleteProject = async (project) => {
     const options = {
