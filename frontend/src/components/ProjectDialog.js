@@ -28,7 +28,7 @@ export default function ProjectDialog(props) {
       name: "",
       link: "",
       prefix: "",
-      language: "en"
+      lang: "en"
     }
   });
 
@@ -76,7 +76,7 @@ export default function ProjectDialog(props) {
           </div>
           }
           <div className = "field">
-          <TextField value={projectFields.link} onChange={(e) => changeFormValue(e, "lang")} label="Project Language"  style={{ width: 300 }} variant="outlined" required={true}/>
+          <TextField value={projectFields.lang} onChange={(e) => changeFormValue(e, "lang")} label="Project Language"  style={{ width: 300 }} variant="outlined" required={true}/>
           </div>
           <div className = "field">
           <TextField value={projectFields.prefix} onChange={(e) => changeFormValue(e, "prefix")} label="Project Prefix"  style={{ width: 300 }} variant="outlined" required={true}/>
