@@ -51,8 +51,6 @@ class PropertyForm extends Component<Props> {
   changeInstantiation(inputValue){
     this.setState({
       resourceName: inputValue
-    }, () => {
-      console.log(this.state.resourceName);
     })
     
   }

@@ -6,6 +6,7 @@ import SaveIcon from '@material-ui/icons/Save';
 
 const useStyles = makeStyles((theme) => ({
   fab: {
+    zIndex: 5,
     position: 'absolute',
     bottom: theme.spacing(12),
     right: theme.spacing(3),
@@ -19,8 +20,9 @@ const SaveBtn = (props) => {
     <div>
       <Fab 
         href='#'
-        color="primary" aria-label="save" className={classes.margin, classes.fab}  
-        onClick={() => this.save()}>
+        color="primary" aria-label="save" className={classes.margin, classes.fab}
+        onClick={() => props.onClick()}  
+      >
         <SaveIcon />
       </Fab>
     </div>

@@ -17,7 +17,6 @@ const getResourceNamesById = async (annotations) => {
     try{
         let resources = new Set();
         let classes = new Set(); 
-        console.log(annotations);
         annotations.forEach(annotation => {
             if(annotation.resource.type === "Class"){
                 classes.add(annotation.resource.resourceName);

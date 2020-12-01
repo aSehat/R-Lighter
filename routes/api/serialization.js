@@ -8,7 +8,6 @@ const {getResourcesById} = require('../utils/resources');
 const {getUserById} = require('../utils/user');
 const Project = require('../../models/Project');
 
-
 router.get('/:project_id', auth, async (req, res) => {
     try {
 

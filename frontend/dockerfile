@@ -1,0 +1,16 @@
+FROM node:12
+
+# Create app directory
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+COPY . .
+
+RUN npm install --silent
+
+EXPOSE 3000
+RUN npm run build
+RUN npm install -g serve 
+
+CMD ["serve", "-s", "build"]
