@@ -54,7 +54,6 @@ router.post('/', auth, async (req, res) => {
 router.get('/:project_id', auth, async (req, res) => {
     try {
         const project = await (await Project.findOne({_id: req.params.project_id}).populate('annotations').populate('resources'));
-        console.log(project);
         if (! project) {
             return res.status(400).json({msg: 'Project not found'});
         }

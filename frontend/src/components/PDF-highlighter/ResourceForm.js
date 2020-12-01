@@ -58,8 +58,6 @@ class ResourceForm extends Component<Props> {
   changeType(inputValue){
     this.setState({
       type: inputValue
-    }, () => {
-      console.log(this.state.type);
     })
     
   }
