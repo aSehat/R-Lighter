@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useTable } from 'react-table';
+import React from "react";
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
@@ -25,7 +24,6 @@ export default function DashboardProjectList(props) {
         props.preparerow(row)
         return (
           <TableRow {...row.getRowProps()} onClick={() => {
-            console.log(row.getRowProps());
             props.getproject(row)
             }}>
             {row.cells.map(cell => {

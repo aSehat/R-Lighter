@@ -51,7 +51,6 @@ function Login({history ,...props}) {
         const API_BASE_URL = "/api/auth";
         axios.post(API_BASE_URL, payload)
             .then(function (response) {
-                console.log(response);
                 if(response.status === 200){
                     setState(prevState => ({
                         ...prevState,
@@ -61,11 +60,11 @@ function Login({history ,...props}) {
                     setAuthToken(response.data.token);
                     history.push("/Dashboard");
                 } else{
-                    console.log("Some error occurred");
+                    alert("Incorrect username or password");
                 }
             })
             .catch(function (error) {
-                console.log(error.response.request.response);
+                alert(error.response.request.response);
             });
     }
 
@@ -74,7 +73,7 @@ function Login({history ,...props}) {
         if (state.email.length > 0 && state.password.length > 0) {
             sendDetailsToServer()
         } else {
-            console.log('Email or Password not long enough')
+            alert('Email or Password not long enough')
         }
     }
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import DashboardListHeader from "./DashboardListHeader";
 import ProjectList from "./DashboardProjectList";
 import axios from 'axios';
-import {ObjectID} from 'bson';
 import { useTable } from 'react-table';
 import Table from '@material-ui/core/Table';
 import { withRouter } from 'react-router-dom';
@@ -23,24 +22,6 @@ const getProjects = (async () => {
   })
   return result;
 })
-
-// call '/me' endpoint
-// TODO: do I need this??
-function getUser() {
-  // TODO: uhhh how do i get a user's ID?? as of now I've just hardcoded a test user
-  let uid = ObjectID.createFromHexString("5f88d87e3185332ae039ff0f");
-  let config = {
-    headers: {
-      "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDYzNTE2MywiZXhwIjoxNjA0NjM4NzYzfQ.ALTmTA71JG8QLY6jYX7PUgo-b2qehNhIH2p6ylYqXCs"
-    },
-    params: {
-      user: {id: uid}
-    }
-  };
-  return ({
-    "name": "Ace"
-  });
-}
 
 
 // TODO: implementation of infinite scroll
@@ -80,13 +61,6 @@ function Dashboard({history,...props}) {
     }
     setProjectsList();
   }, []);
-
-  // TODO: write the code to update the db with a new project
-  //  this should also probably redirect and be async??
-  let updateDB = (newProject) => {
-    console.log(newProject);
-    console.log("if only it were that easy");
-  };
 
 
   // table data
@@ -161,16 +135,6 @@ function Dashboard({history,...props}) {
       return res.data
     })
     return result;
-  }
-
-  // I don't think this is necessary, since a username will never change without a forced logout and redirect
-  // const [user, setUser] = useState(() => getUser());
-
-  const handlePopupFunctions = {
-    handleclickopen: handleClickOpen,
-    handleclose: handleClose,
-    open: open,
-    onconfirm: createProject
   }
 
   return (

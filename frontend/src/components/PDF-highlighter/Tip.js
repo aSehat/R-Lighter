@@ -33,7 +33,6 @@ class Tip extends Component<Props, State> {
 
   // for TipContainer
   componentDidUpdate(nextProps: Props, nextState: State) {
-    console.log(this.props);
     const { onUpdate } = this.props;
 
     if (onUpdate && this.state.compact !== nextState.compact) {

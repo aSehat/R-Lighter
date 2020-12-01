@@ -24,9 +24,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DashboardHeader(props) {
   const classes = useStyles();
-  // idk if this is necessary, might be nice
-  // let user_info = props.getuser();
-  // console.log(user_info);
 
   return (
     <div className="inline">

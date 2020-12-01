@@ -19,7 +19,7 @@ const updateProjectAnnotations = async (projectId, annotations) => {
         }
         return Promise.resolve("Success") ;
     } catch (err){
-        console.log(err.message)
+        console.log(err)
         return Promise.reject("Server Error");
     }
 }
@@ -47,7 +47,7 @@ const updateProjectResourcesAnnotations = async (projectId, annotations, resourc
         }
         return Promise.resolve("Success") ;
     } catch (err){
-        console.log(err.message)
+        console.log(err)
         return Promise.reject("Server Error");
     }
 }

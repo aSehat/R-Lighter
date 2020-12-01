@@ -3,7 +3,6 @@
 
 import React, { Component } from "react";
 import PDFWorker from "worker-loader!pdfjs-dist/lib/pdf.worker";
-import Button from "@material-ui/core/Button";
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 
@@ -70,10 +69,6 @@ const HighlightPopup = ({ highlight }) =>
 
 const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
-
-const searchParams = new URLSearchParams(document.location.search);
-
-const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
 
 class PDFHighlights extends Component<Props, State> {
   state = {
@@ -204,7 +199,7 @@ class PDFHighlights extends Component<Props, State> {
     if(highlight.resource.type === "Property" || highlight.resource.type === ""){
       return Promise.resolve(
         {
-          remainingHighlights: highlights.filter((h) => h.id != highlight.id),
+          remainingHighlights: highlights.filter((h) => h.id !== highlight.id),
           deletedHighlights: highlight.saved ? [highlight] : []
         }
       ); 
@@ -244,7 +239,6 @@ class PDFHighlights extends Component<Props, State> {
     const { highlights, unsavedHighlights } = this.state;
     const {content, position, resource } = highlight;
     const id = getNextId();
-    let list = ""
     if(highlight.resource.type === "Class" || highlight.resource.type !== "Property"){
       this.createNewResource(highlight)
     }
@@ -285,7 +279,7 @@ class PDFHighlights extends Component<Props, State> {
   }
 
   render() {
-    const { url, highlights } = this.state;
+    const { highlights } = this.state;
   
     return (
       <div className="App" style={{ display: "flex", height: "100vh" }}>

@@ -7,7 +7,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import { withRouter } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -61,11 +60,11 @@ function Signup({history,...props}) {
                     }))
                     history.push("/Dashboard");
                 } else{
-                    console.log("Some error occurred");
+                    alert("Some error occurred");
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                alert(error);
             });
     }
 
@@ -76,10 +75,10 @@ function Signup({history,...props}) {
             state.name.length > 0 ) {
                 sendDetailsToServer()
             } else {
-                console.log('Name, Email, or Password are not long enough')
+                alert('Name, Email, or Password are not long enough')
             }
         } else {
-            console.log('Passwords do not match');
+            alert('Passwords do not match');
         }
     }
 

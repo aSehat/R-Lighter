@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteConfirm from '../Confirm/DeleteConfirm';
-import PropertyForm from '../PDF-highlighter/PropertyForm';
-import ResourceForm from '../PDF-highlighter/ResourceForm';
-import EditIcon from '@material-ui/icons/Edit';
+// import PropertyForm from '../PDF-highlighter/PropertyForm';
+// import ResourceForm from '../PDF-highlighter/ResourceForm';
+// import EditIcon from '@material-ui/icons/Edit';
 import type { T_Highlight } from "react-pdf-highlighter/src/types";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,14 +48,14 @@ function Sidebar({ highlights, resources, classes, toggleDocument, resetHighligh
     setDeleteValue(highlight);
   }
 
-  const editHighlight = (highlight) => {
-    setEditValue(highlight);
-  }
+  // const editHighlight = (highlight) => {
+  //   setEditValue(highlight);
+  // }
 
   const handleOpen = (openLabel) => {
     if(openLabel === "delete"){
       setDeleteOpen(true);
-    } else if (openLabel == "edit"){
+    } else if (openLabel === "edit"){
       setEditOpen(true);
     }
   };
@@ -80,13 +80,13 @@ function Sidebar({ highlights, resources, classes, toggleDocument, resetHighligh
     }
   };
 
-  const handleEditClose = (newValue) => {
-    setEditOpen(false);
-    setEditValue(null);
-    if (newValue) {
-      editResource(newValue);
-    }
-  }
+  // const handleEditClose = (newValue) => {
+  //   setEditOpen(false);
+  //   setEditValue(null);
+  //   if (newValue) {
+  //     editResource(newValue);
+  //   }
+  // }
 
   return (
     <>
