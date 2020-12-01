@@ -8,7 +8,15 @@ import Button from '@material-ui/core/Button';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 
-
+const useStyles = makeStyles((theme) => ({
+  project: {
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#d3d3d3'
+    },
+    backgroundColor: 'white'
+  },
+}));
 // NOTE: the list keys are made using the following 2 assumptions:
       //  1: the "date" field is date of creation, NOT date last modified
       //  2: it is not possible to create 2 identical projects within 1ms of each other
@@ -20,6 +28,7 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 
 export default function DashboardProjectList(props) {
+  const classes = useStyles();
   return (
     <TableBody {...props.gettablebodyprops()}>
       {props.rows.map((row, i) => {
@@ -29,7 +38,7 @@ export default function DashboardProjectList(props) {
           <TableRow {...row.getRowProps()} onClick={() => {
             console.log(row.getRowProps());
             props.getproject(row)
-            }}>
+            }} className={classes.project}>
             {row.cells.map(cell => {
               return (
                 <TableCell {...cell.getCellProps()}>

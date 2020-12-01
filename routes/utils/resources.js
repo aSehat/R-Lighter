@@ -1,4 +1,5 @@
 const Resource = require('../../models/Resource');
+const Project = require('../../models/Project');
 var ObjectId = require('mongodb').ObjectID;
 
 const getResourcesById = async (resourceIds) => {
@@ -12,74 +13,73 @@ const getResourcesById = async (resourceIds) => {
     } 
 }
 
-const getResourceNamesById = async (resourceIds) => {
-    const resourceIdObjects = await Promise.all(resourceIds.map( (resourceId) => { return Promise.resolve(ObjectId(resourceId)); }));
-    console.log(resourceIdObjects);
+const getResourceNamesById = async (annotations) => {
     try{
-        const resourceObjects = await Resource.find({_id: {$in: resourceIdObjects}});
-        let resources = [];
-        let classes = []; 
-        
-        resourceObjects.forEach(resource => {
-            if(resource.class === "Class"){
-                classes.push(resource.name);
+        let resources = new Set();
+        let classes = new Set(); 
+        annotations.forEach(annotation => {
+            if(annotation.resource.type === "Class"){
+                classes.add(annotation.resource.resourceName);
             } else {
-                resources.push(resource.name);
+                resources.add(annotation.resource.resourceName);
             }
         })
-
-        return Promise.resolve({resources, classes});
+        return Promise.resolve({resources: [...resources], classes: [...classes]});
     }catch (err){
-        console.log(err.message);
+        console.log(err);
         return Promise.reject("Server Error");
     } 
 }
 
 
-const createResources = async (annotations) => {
+const createResources = async (annotations, projectId) => {
     try {
         const NewResources = await Promise.all(annotations.map( async (annotation) => {
             let newResource = {};
             const content = annotation.content.text;
             const {type, resourceName, property} = annotation.resource;
-            newResource.class = type;
-            newResource.name = resourceName;
-            newResource.property = {}
-            newResource.property[property.label] = content;
-            newResource.annotationId = annotation._id;
-
+            let newResourceContent = {};
             try{
-                const resource = await Resource.findOne({name: resourceName});
-                let newResourceContent;
-                if (!resource) {
+                if(type !== "Property"){
+                    newResource.class = type;
+                    newResource.name = resourceName;
+                    newResource.property = {};
+                    newResource.property[property.label] = content;
+                    newResource.annotationId = [annotation._id];
+                    newResource.projectId = ObjectId(projectId);
                     instanResource = new Resource(newResource);
                     newResourceContent = await instanResource.save();
                 } else {
-                    let newProperty = {}
+                    const resource = await Resource.findOne({name: resourceName, projectId: ObjectId(projectId)});
                     if (property.label == "label"){
-                        newProperty.label = content
+                        newResourceContent = await Resource.findOneAndUpdate({
+                            _id: resource._id
+                        }, {
+                            $set: {"property.label": content},
+                            $addToSet: {annotationId: [annotation._id]}
+                        }, {new: true});    
                     } else if (property.label == "description"){
-                        newProperty.description = content
-                    }
-                    newResourceContent = await Resource.findOneAndUpdate({
-                        name: resourceName
-                    }, {
-                        $set: {property: newProperty}
-                    }, {new: true});    
+                        newResourceContent = await Resource.findOneAndUpdate({
+                            _id: resource._id
+                        }, {
+                            $set: {"property.description": content},
+                            $addToSet: {annotationId: [annotation._id]}
+                        }, {new: true});   
+                    }   
                 }
-                if(type != 'Class'){
+                if(type != 'Class' && type !='Property'){
+                    const classResource = await Resource.findOne({name: type, projectId: ObjectId(projectId)});
                     await Resource.findOneAndUpdate({
-                        name: type
+                        _id: classResource._id
                     }, {
                         $addToSet: {resources: [newResourceContent._id]}
                     });
-                    
                 } 
                 return new Promise((resolve, _) => {
                     resolve(newResourceContent);
                 })
             } catch (err) {
-                console.log(err.message);
+                console.log(err);
                 return new Promise((_, reject) => {
                     reject(err.message);
                 });
@@ -87,7 +87,7 @@ const createResources = async (annotations) => {
         }));
         return new Promise((resolve, _) => resolve(NewResources));
     } catch (err) {
-        console.error(err.message);
+        console.error(err);
         return new Promise((_, reject) => {
             reject(err.message);
         }); 

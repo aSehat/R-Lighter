@@ -67,14 +67,12 @@ router.post('/', auth, async (req, res) => {
 // @access      Private
 router.get('/:project_id', auth, async (req, res) => {
     try {
-        const project = await Project.findOne({_id: req.params.project_id});
-
+        const project = await (await Project.findOne({_id: req.params.project_id}).populate('annotations').populate('resources'));
         if (! project) {
             return res.status(400).json({msg: 'Project not found'});
         }
-        const annotations = await getAnnotationsById(project.annotations);
-        const {resources, classes} = await getResourceNamesById(project.resources);
-        res.json({project, annotations, resources, classes});
+        const {resources, classes} = await getResourceNamesById(project.annotations);
+        res.json({project, resources, classes});
     } catch (err) {
         if (err.kind == 'ObjectId') {
             return res.status(400).json({msg: 'Project not found'});
