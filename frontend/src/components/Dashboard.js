@@ -12,8 +12,7 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 import AddProjectBtn from './layout/AddProjectBtn';
 import './style/Dashboard.css';
-// this function will be an axios call to one of the routes
-// TODO: what is the max number of documents that the database will return?
+
 const getProjects = (async () => {
   let headers = {
     'x-auth-token': localStorage.getItem("token")
@@ -24,51 +23,31 @@ const getProjects = (async () => {
   return result;
 })
 
-// call '/me' endpoint
-// TODO: do I need this??
-function getUser() {
-  // TODO: uhhh how do i get a user's ID?? as of now I've just hardcoded a test user
-  let uid = ObjectID.createFromHexString("5f88d87e3185332ae039ff0f");
-  let config = {
-    headers: {
-      "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWY5NWYzNWM2NGY5ZmFiNGE0Y2M5NjI5In0sImlhdCI6MTYwNDYzNTE2MywiZXhwIjoxNjA0NjM4NzYzfQ.ALTmTA71JG8QLY6jYX7PUgo-b2qehNhIH2p6ylYqXCs"
-    },
-    params: {
-      user: {id: uid}
-    }
-  };
-  return ({
-    "name": "Ace"
-  });
-}
 
-
-// TODO: infinite scroll or pagination? i'm leaning towards pagination, unless I can figure out what to do about
-//  the number of event handlers on the page
+// TODO: infinite scroll or pagination?
+// kris would like to use infinite scroll to lazily load annotations
 function dynamicLoad(setProjects) {
   //
 }
 
 
 function Dashboard({history,...props}) {
-  // to avoid ambiguity, ascending means to begin with the smallest/first element (0->9, A->Z, etc)
   const [sortBy, setSortBy] = useState({
     attribute: "date",
     ascending: true,
   });
 
-  // the initial value for projects is expensive to execute, so put it in a function (apparently React stops
-  //  unnecessary functions before they execute, but not unnecessary statements)
+  // this is the array that holds the data used to generate the table
   const [projects, setProjects] = useState(() => {
-    // an array of project documents from the database
     return [];
   });
 
+  // retrieve the current user's projects from the database, strip out
+  //  unnecessary information, and assign it to the projects array
   useEffect(() => {
     const setProjectsList = async () => {
       let db_ret = await getProjects();
       let projects_relevant_info = db_ret.map((current, move) => {
-        // TODO: do we care about the owner?
         return ({
           "_id": current._id,
           "name": current.name,
@@ -83,13 +62,6 @@ function Dashboard({history,...props}) {
     setProjectsList();
   }, []);
 
-  // TODO: write the code to update the db with a new project
-  //  this should also probably redirect and be async??
-  let updateDB = (newProject) => {
-    console.log(newProject);
-    console.log("if only it were that easy");
-  };
-
   const editButton = (row) => {
     return (<InfoOutlinedIcon
       className="edit-project"
@@ -101,7 +73,9 @@ function Dashboard({history,...props}) {
   </InfoOutlinedIcon>);
   }
 
-  // table data
+  // take the array of projects & add the edit button to each row
+  // React will reload the table when any of the underlying data changes
+  //  (useMemo is solely an optimization)
   const data = React.useMemo(
     () => {
       const projectsList = projects.map((current, step) => {
@@ -143,40 +117,9 @@ function Dashboard({history,...props}) {
     []
   );
 
-    const updateMyData = () => {
-      //
-    }
-
-  // custom cell renderer
-  // const EditableCell = ({
-  //   value: initialValue,
-  //   row: {index},
-  //   column: {id},
-  //   updateMyData,
-  // }) => {
-  //   const [value, setValue] = React.useState(initialValue);
-  //   const onChange = e => {
-  //     setValue(e.target.value);
-  //   }
-
-  //   const onBlur = () => {
-  //     updateMyData(index, id, value);
-  //   }
-
-  //   React.useEffect(() => {
-  //     setValue(initialValue)
-  //   }, [initialValue]);
-
-  //   return <input value={value} onChange={onChange} onBlur={onBlur} />
-  // };
-
-  // // make custom cell renderer available to cell.render() in DashboardProjectList.js
-  // const defaultColumn = {
-  //   EditableCell: EditableCell,
-  // }
 
   const tableInstance = useTable({columns, data});
-  // useTable returns a whole bunch of stuff
+  // weird JS unpacking syntax b/c useTable returns a lot of stuff
   const {
     getTableProps,
     getTableBodyProps,
@@ -185,13 +128,16 @@ function Dashboard({history,...props}) {
     prepareRow,
   } = tableInstance;
 
+  // redirects the user to the PDF annotation page
+  //  (this is called after creating a new project)
   const getProject = (info) => {
     history.push("/project/" + info.original._id);
   }
 
-
+  // the following 2 are to keep track of which modal popup is currently open
   const [openCreate, setOpenCreate] = React.useState(false);
   const [openUpdate, setOpenUpdate] = React.useState(false);
+  // stores a single project's information (used to store the fields of one of the popups)
   const [projectSettings, setProjectSettings] = React.useState(null);
 
 
@@ -200,12 +146,14 @@ function Dashboard({history,...props}) {
     setProjectSettings(project);
   })
 
+  // if the fields change and the update modal popup is not already open, then open it
   useEffect(() => {
     if (projectSettings && !openUpdate) {
       handleClickOpen("Update");
     }
   }, [projectSettings]);
 
+  // handles which popup gets opened (create or update)
   const handleClickOpen = (type) => {
     if(type == "Create"){
       setOpenCreate(true);
@@ -214,6 +162,7 @@ function Dashboard({history,...props}) {
     }
   };
 
+  // properly closes the popup & clears the field data
   const handleClose = (type) => {
     setProjectSettings(null);
     if(type == "Create"){
@@ -223,6 +172,9 @@ function Dashboard({history,...props}) {
     }
   };
 
+  // take the field data from the popup, send it to the backend (which then sends it to the database)
+  //  then redirect the user to the PDF annotation page, loading the PDF URL that the user just provided
+  // TODO: error handling!
   const createProject = async (project) => {
     const headers = {
       "x-auth-token": localStorage.getItem("token")
@@ -249,8 +201,6 @@ function Dashboard({history,...props}) {
     return result;
   }
 
-  // I don't think this is necessary, since a username will never change without a forced logout and redirect
-  // const [user, setUser] = useState(() => getUser());
 
   return (
     <div>
