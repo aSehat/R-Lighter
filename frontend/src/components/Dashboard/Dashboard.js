@@ -61,23 +61,22 @@ function Dashboard({history,...props}) {
     setProjectsList();
   }, []);
 
+  const editButton = (row) => {
+    return (<InfoOutlinedIcon
+      className="edit-project"
+      variant="contained"
+      color="primary"
+      onClick={(event) => {event.stopPropagation(); getProjectSettings(row)}}
+  >
+      Edit
+  </InfoOutlinedIcon>);
+  }
 
   // take the array of projects & add the edit button to each row
   // React will reload the table when any of the underlying data changes
   //  (useMemo is solely an optimization)
   const data = React.useMemo(
     () => {
-      const editButton = (row) => {
-        return (<InfoOutlinedIcon
-          className="edit-project"
-          variant="contained"
-          color="primary"
-          onClick={(event) => {event.stopPropagation(); getProjectSettings(row)}}
-      >
-          Edit
-      </InfoOutlinedIcon>);
-      }
-      
       const projectsList = projects.map((current, step) => {
         return ({
           "_id": current._id,
