@@ -24,7 +24,7 @@ const getProjects = (async () => {
 })
 
 
-// TODO: infinite scroll or pagination?
+// infinite scroll or pagination?
 // kris would like to use infinite scroll to lazily load annotations
 function dynamicLoad(setProjects) {
   //
@@ -184,10 +184,12 @@ function Dashboard({history,...props}) {
     });
     if (newProjCreated) {
       history.push("/project/" + result._id);
+    } else {
+      // update the table
     }
   };
 
-  // TODO: to update the table without calling the db again, i need the index (in the projects array) of the row that just got deleted
+  // to update the table without calling the db again, i need the index (in the projects array) of the row that just got deleted
   //  if pagination stores the entire table in memory all the time, then (max_rows_per_page*page_num-1)+row_num == index in projects array
   //  if pagination does NOT store the entire table in memory all the time, then row_num == index in projects array?
   //    the above formula is also probably true for infinite scroll
