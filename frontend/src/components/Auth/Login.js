@@ -82,14 +82,10 @@ function Login({history ,...props}) {
         if (state.email.length > 5 && state.password.length > 8) {
             sendDetailsToServer()
         } else {
-<<<<<<< HEAD
-            alert('Email or Password not long enough')
-=======
             setState(prevState => ({
                 ...prevState,
                 'errorMessage' : 'Email, and / or Password is not long enough'
             }))
->>>>>>> main
         }
     }
 

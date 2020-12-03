@@ -84,12 +84,6 @@ function Signup({history,...props}) {
             state.name.length > 0 ) {
                 sendDetailsToServer()
             } else {
-<<<<<<< HEAD
-                alert('Name, Email, or Password are not long enough')
-            }
-        } else {
-            alert('Passwords do not match');
-=======
                 setState(prevState => ({
                     ...prevState,
                     'errorMessage' : 'Name, Email, and / or Password is not long enough'
@@ -100,7 +94,6 @@ function Signup({history,...props}) {
                 ...prevState,
                 'errorMessage' : 'Passwords do not match'
             }))
->>>>>>> main
         }
     }
 
