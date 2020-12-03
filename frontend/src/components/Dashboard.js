@@ -175,14 +175,16 @@ function Dashboard({history,...props}) {
   // take the field data from the popup, send it to the backend (which then sends it to the database)
   //  then redirect the user to the PDF annotation page, loading the PDF URL that the user just provided
   // TODO: error handling!
-  const createProject = async (project) => {
+  const createProject = async (project, newProjCreated) => {
     const headers = {
       "x-auth-token": localStorage.getItem("token")
     };
     const result = await axios.post('/api/project', project, {headers: headers}).then(res => {
       return res.data;
     });
-    history.push("/project/" + result._id);
+    if (newProjCreated) {
+      history.push("/project/" + result._id);
+    }
   };
 
   // TODO: to update the table without calling the db again, i need the index (in the projects array) of the row that just got deleted
@@ -210,8 +212,8 @@ function Dashboard({history,...props}) {
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
         <ProjectList getproject={getProject} getProjectSettings={(project) => getProjectSettings(project)} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </Table>
-      <ProjectDialog inputType="Create" open={openCreate} onConfirm={(project) => createProject(project)} onClose={() => handleClose("Create")} />
-      <ProjectDialog inputType="Update" inputProjectFields={projectSettings} open={openUpdate} onDelete={(project) => deleteProject(project)} onConfirm={(project) => createProject(project)} onClose={() => handleClose("Update")} />
+      <ProjectDialog inputType="Create" open={openCreate} onConfirm={(project) => createProject(project, true)} onClose={() => handleClose("Create")} />
+      <ProjectDialog inputType="Update" inputProjectFields={projectSettings} open={openUpdate} onDelete={(project) => deleteProject(project)} onConfirm={(project) => createProject(project, false)} onClose={() => handleClose("Update")} />
       </div>
     </div>
   );
