@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import DashboardListHeader from "./DashboardListHeader";
 import ProjectList from "./DashboardProjectList";
 import axios from 'axios';
@@ -61,7 +61,7 @@ function Dashboard({history,...props}) {
     setProjectsList();
   }, []);
 
-  const editButton = (row) => {
+  const editButton = useCallback((row) => {
     return (<InfoOutlinedIcon
       className="edit-project"
       variant="contained"
@@ -70,7 +70,7 @@ function Dashboard({history,...props}) {
   >
       Edit
   </InfoOutlinedIcon>);
-  }
+  }, [])
 
   // take the array of projects & add the edit button to each row
   // React will reload the table when any of the underlying data changes
@@ -90,7 +90,7 @@ function Dashboard({history,...props}) {
       })
     return projectsList;
   },
-    [projects]
+    [projects, editButton]
   );
 
   // table headers
@@ -183,7 +183,7 @@ function Dashboard({history,...props}) {
     if (newProjCreated) {
       history.push("/project/" + result._id);
     } else {
-      // update the table
+      window.location = "/Dashboard";
     }
   };
 
@@ -196,10 +196,10 @@ function Dashboard({history,...props}) {
     const options = {
       headers: {"x-auth-token": localStorage.getItem("token")}
     }
-    const result = await axios.delete('/api/project/'+project._id, options).then(res => {
+    await axios.delete('/api/project/'+project._id, options).then(res => {
       return res.data;
     });
-    return result;
+    window.location = "/Dashboard";
   }
 
   return (

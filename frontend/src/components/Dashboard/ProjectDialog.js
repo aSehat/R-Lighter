@@ -85,7 +85,7 @@ export default function ProjectDialog(props) {
                         props.onDelete(projectFields);
                       } else {
                         // do nothing
-                        alert("no deletion took place :)");
+                        alert("no deletion took place");
                       }
                     }}
                 >
