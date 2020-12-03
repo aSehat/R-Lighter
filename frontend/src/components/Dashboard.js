@@ -201,7 +201,7 @@ function Dashboard({history,...props}) {
   })
 
   useEffect(() => {
-    if (projectSettings) {
+    if (projectSettings && !openUpdate) {
       handleClickOpen("Update");
     }
   }, [projectSettings]);
