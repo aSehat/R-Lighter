@@ -20,15 +20,12 @@
   transition: background 0.3s;
 }
 
-.Highlight__popup {
+.popup-info {
   background-color: #3d464d;
   border: 1px solid rgba(255, 255, 255, 0.25);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 3px;
-  max-width: 300px;
-  max-height: 100px;
-  overflow-y: scroll;
 }
 
 .Highlight--scrolledTo .Highlight__part {

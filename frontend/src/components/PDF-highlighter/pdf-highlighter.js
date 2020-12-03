@@ -3,10 +3,9 @@
 
 import React, { Component } from "react";
 import PDFWorker from "worker-loader!pdfjs-dist/lib/pdf.worker";
-import Button from "@material-ui/core/Button";
 import axios from 'axios';
 import { saveAs } from 'file-saver';
-
+import HighlightPopup from './HighlightPopup';
 import SaveBtn from '../layout/SaveBtn';
 import ExportAnnotBtn from '../layout/ExportAnnotBtn';
 import BibTex from '../layout/BibTex';
@@ -21,9 +20,6 @@ import {
 } from "react-pdf-highlighter";
 
 
-import testHighlights from "../test-highlights";
-
-
 import Tip from "./Tip";
 import Spinner from "./Spinner";
 import Sidebar from "./Sidebar";
@@ -35,7 +31,6 @@ import type {
 
 import "../style/App.css";
 setPdfWorker(PDFWorker);
-const { returnTrimmedProperty } = require('../../utils/utils');
 
 type Props = {};
 
@@ -55,18 +50,6 @@ const parseIdFromHash = () =>
 const resetHash = () => {
   document.location.hash = "";
 };
-
-const HighlightPopup = ({ highlight }) =>
-  highlight ? (
-    <div className="Highlight__popup">
-      <h4>Resource</h4>
-      <p>{highlight.resource.type}:{highlight.resource.resourceName}</p>
-      <h4>Property</h4>
-      <p>
-        skos:{highlight.resource.property.label}#{returnTrimmedProperty(highlight.content.text)}
-      </p>
-    </div>
-  ) : null;
 
 const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
@@ -94,16 +77,6 @@ class PDFHighlights extends Component<Props, State> {
   resetHighlights = () => {
     this.setState({
       highlights: []
-    });
-  };
-
-  toggleDocument = () => {
-    const newUrl =
-      this.state.url === PRIMARY_PDF_URL ? SECONDARY_PDF_URL : PRIMARY_PDF_URL;
-
-    this.setState({
-      url: newUrl,
-      highlights: testHighlights[newUrl] ? [...testHighlights[newUrl]] : []
     });
   };
 
@@ -230,8 +203,10 @@ class PDFHighlights extends Component<Props, State> {
 
   async deleteResource(highlight){
     const {remainingHighlights, deletedHighlights}= await this.getAllDeleteAnnotations(highlight, this.state.highlights);
+    const unsavedHighlights = remainingHighlights.filter(h => !h.saved); 
     this.setState({
       highlights: remainingHighlights,
+      unsavedHighlights: unsavedHighlights,
       deletedHighlights: [...this.state.deletedHighlights, ...deletedHighlights]
     })
   }
@@ -294,7 +269,6 @@ class PDFHighlights extends Component<Props, State> {
           resources={this.state.resources}
           classes={this.state.classes}
           resetHighlights={this.resetHighlights}
-          toggleDocument={this.toggleDocument}
           deleteResource={(highlight) => this.deleteResource(highlight)}
         />
         <div
