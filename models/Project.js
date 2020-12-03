@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Annotation = require('./Annotation').schema;
 const Schema = mongoose.Schema;
 
 const ProjectSchema = new mongoose.Schema({
@@ -10,6 +11,10 @@ const ProjectSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'user'
     },
+    bibtex: {
+        type: String,
+        default: ""
+    },
     users: [
         {
             type: Schema.Types.ObjectId,
@@ -20,12 +25,7 @@ const ProjectSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    annotations: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'annotation'
-        }
-    ],
+    annotations: [Annotation],
     resources: [
         {
             type: Schema.Types.ObjectId,

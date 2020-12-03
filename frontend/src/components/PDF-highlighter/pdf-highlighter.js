@@ -7,6 +7,10 @@ import Button from "@material-ui/core/Button";
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 
+import SaveBtn from '../layout/SaveBtn';
+import ExportAnnotBtn from '../layout/ExportAnnotBtn';
+import BibTex from '../layout/BibTex';
+
 import {
   PdfLoader,
   PdfHighlighter,
@@ -76,7 +80,10 @@ class PDFHighlights extends Component<Props, State> {
     projectId: this.props.match.params.id,
     token: localStorage.getItem("token"),
     url: "",
+    changedBibtex: false,
+    bibtex: "",
     unsavedHighlights: [],
+    deletedHighlights: [],
     highlights: [],
     classes: ["Class"],
     resources: []
@@ -111,10 +118,21 @@ class PDFHighlights extends Component<Props, State> {
   };
 
   save = () => {
+    const deletedAnnotations = this.state.deletedHighlights.map((h) => h._id)
+    const unsavedHighlights = this.state.unsavedHighlights.map((h) => {
+      const { saved, id, ...rest} = h
+      return rest;
+    })
     let headers = {
       'x-auth-token': this.state.token 
     };
-    axios.post('/api/annotation', {project_id: this.state.projectId, annotations: this.state.unsavedHighlights}, {headers: headers}).then(res => console.log(res.data));
+    let requestBody = {}
+    if(this.state.changedBibtex){
+      requestBody = {project_id: this.state.projectId, annotations: unsavedHighlights, deletedAnnotations: deletedAnnotations, bibtex: this.state.bibtex}
+    }else{
+      requestBody = {project_id: this.state.projectId, annotations: unsavedHighlights, deletedAnnotations: deletedAnnotations}
+    }
+    axios.post('/api/annotation', requestBody, {headers: headers});
     this.setState({
       unsavedHighlights: []
     });
@@ -127,7 +145,6 @@ class PDFHighlights extends Component<Props, State> {
     };
     axios.get('/api/serialization/'+ this.state.projectId, {headers: headers}).then(res => {
       var content = res.data.rdf;
-      // any kind of extension (.txt,.cpp,.cs,.bat)
       var filename = "exportedResources.ttl";
   
       var blob = new Blob([content], {
@@ -140,7 +157,6 @@ class PDFHighlights extends Component<Props, State> {
 
 
   componentDidMount() {
-    console.log(this.props.match.params.id);
     window.addEventListener(
       "hashchange",
       this.scrollToHighlightFromHash,
@@ -150,11 +166,14 @@ class PDFHighlights extends Component<Props, State> {
       'x-auth-token': this.state.token 
     };
     axios.get('/api/project/' + this.state.projectId, {headers: headers}).then(res => {
-    console.log(res);  
+    const savedAnnotations = res.data.project.annotations.map(annotation => {
+      return {...annotation, id: annotation._id, saved: true}
+    })
     this.setState({
         prefix: res.data.project.prefix,
+        bibtex: res.data.project.bibtex,
         url: "/api/pdf?url=" + res.data.project.link,
-        highlights: res.data.annotations,
+        highlights: savedAnnotations,
         resources: res.data.resources,
         classes: ["Class",...res.data.classes] 
       })
@@ -173,8 +192,6 @@ class PDFHighlights extends Component<Props, State> {
     if(highlight.resource.type === "Class"){
       this.setState({
         classes: [...classes, highlight.resource.resourceName]
-      }, () => {
-        console.log(this.state.classes);
       }) 
     } else { // it's a resource instantiation
       this.setState({
@@ -183,30 +200,63 @@ class PDFHighlights extends Component<Props, State> {
     }
   }
 
+  async getAllDeleteAnnotations(highlight, highlights){ //returns all REMAINING HIGHLIGHTS
+    if(highlight.resource.type === "Property" || highlight.resource.type === ""){
+      return Promise.resolve(
+        {
+          remainingHighlights: highlights.filter((h) => h.id != highlight.id),
+          deletedHighlights: highlight.saved ? [highlight] : []
+        }
+      ); 
+    }
+    var remainingHighlights = [];
+    var childrenHighlights = [];
+    var deletedHighlights = [];
+    highlights.forEach((h) => {
+      if (h.id !== highlight.id && (h.resource.type === highlight.resource.resourceName || h.resource.resourceName === highlight.resource.resourceName)){
+        childrenHighlights.push(h);
+      } else if (h.id !== highlight.id){
+        remainingHighlights.push(h);
+      }
+    })
+    for(let i = 0; i < childrenHighlights.length; i++){
+      let result = await this.getAllDeleteAnnotations(childrenHighlights[i], remainingHighlights);
+      remainingHighlights = result.remainingHighlights;
+      deletedHighlights = deletedHighlights.concat(result.deletedHighlights);
+    }
+    deletedHighlights = highlight.saved ? [highlight, ...deletedHighlights] : [...deletedHighlights]
+    return Promise.resolve({remainingHighlights, deletedHighlights});  
+  }
 
+  async deleteResource(highlight){
+    const {remainingHighlights, deletedHighlights}= await this.getAllDeleteAnnotations(highlight, this.state.highlights);
+    this.setState({
+      highlights: remainingHighlights,
+      deletedHighlights: [...this.state.deletedHighlights, ...deletedHighlights]
+    })
+  }
+
+  async editResource(highlight){
+    alert("here!");
+  }
 
   addHighlight(highlight: T_NewHighlight) {
     const { highlights, unsavedHighlights } = this.state;
     const {content, position, resource } = highlight;
-    console.log("Saving highlight", highlight);
     const id = getNextId();
     let list = ""
     if(highlight.resource.type === "Class" || highlight.resource.type !== "Property"){
       this.createNewResource(highlight)
     }
-    const property = (highlight.resource.property.label === "") ? "description" : "label"
+    const property = resource.propertyType
+    const newAnnotation = {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id, saved: false };
     this.setState({
-      unsavedHighlights:[ {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id }, ...unsavedHighlights], 
-      highlights: [ {content, position, resource: {resourceName: resource.resourceName, type: resource.type, property: {label: property}}, id: id }, ...highlights],
-    }, () => {
-      console.log(this.state.highlights);
+      unsavedHighlights:[...unsavedHighlights, newAnnotation], 
+      highlights: [...highlights, newAnnotation],
     });
-    console.log(this.state.highlights);
   }
 
   updateHighlight(highlightId: string, position: Object, content: Object) {
-    console.log("Updating highlight", highlightId, position, content);
-
     this.setState({
       highlights: this.state.highlights.map(h => {
         const {
@@ -227,10 +277,16 @@ class PDFHighlights extends Component<Props, State> {
     });
   }
 
+  handleBibtex = (bibtex) => {
+    this.setState({
+      bibtex: bibtex,
+      changedBibtex: true
+    })
+  }
+
   render() {
     const { url, highlights } = this.state;
-    console.log(this.state.classes);
-    
+  
     return (
       <div className="App" style={{ display: "flex", height: "100vh" }}>
         <Sidebar
@@ -239,6 +295,7 @@ class PDFHighlights extends Component<Props, State> {
           classes={this.state.classes}
           resetHighlights={this.resetHighlights}
           toggleDocument={this.toggleDocument}
+          deleteResource={(highlight) => this.deleteResource(highlight)}
         />
         <div
           style={{
@@ -247,8 +304,13 @@ class PDFHighlights extends Component<Props, State> {
             position: "relative"
           }}
         >
-          <Button onClick={() => this.save()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Save</Button>
-          <Button onClick={() => this.export()} variant="contained" color="primary" style={{height: "40px", position: "relative", display: "inline", textAlign: "center"}}>Export Annotations</Button>
+          <div>
+            <SaveBtn onClick={() => this.save()} />
+            <br/>
+            <ExportAnnotBtn onClick={() => this.export()} />
+            <br/>
+            <BibTex value={this.state.bibtex} updateBibtex={this.handleBibtex}/>
+          </div>
           <PdfLoader url={this.state.url} beforeLoad={<Spinner />}>
             {pdfDocument => (
               <PdfHighlighter
@@ -276,6 +338,7 @@ class PDFHighlights extends Component<Props, State> {
                     }}
                     classes={this.state.classes}
                     resources={this.state.resources}
+                    highlights={this.state.highlights}
                   />
                 )}
                 highlightTransform={(
@@ -314,7 +377,6 @@ class PDFHighlights extends Component<Props, State> {
                     <Popup
                       popupContent={<HighlightPopup highlight={highlight} />}
                       onMouseOver={popupContent => {
-                        console.log(highlight)
                         setTip(highlight, highlight => popupContent)
                       }}
                       onMouseOut={hideTip}
