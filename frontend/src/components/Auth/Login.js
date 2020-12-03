@@ -10,6 +10,9 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
+import { FormControl } from '@material-ui/core';
+import { FormHelperText } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -56,24 +59,37 @@ function Login({history ,...props}) {
                         ...prevState,
                         'successMessage' : 'Login successful. Redirecting to home page..'
                     }))
-                    alert('Login successful. Redirecting to home page...');
                     setAuthToken(response.data.token);
                     history.push("/Dashboard");
                 } else{
-                    alert("Incorrect username or password");
+                    setState(prevState => ({
+                        ...prevState,
+                        'errorMessage' : 'Some error occurred'
+                    }))
                 }
             })
             .catch(function (error) {
-                alert(error.response.request.response);
+                var theError = JSON.parse( error.response.request.response );
+                setState(prevState => ({
+                    ...prevState,
+                    'errorMessage' : theError.errors[0].msg
+                }))
             });
     }
 
     const handleSubmitClick = (e) => {
         e.preventDefault();
-        if (state.email.length > 0 && state.password.length > 0) {
+        if (state.email.length > 5 && state.password.length > 8) {
             sendDetailsToServer()
         } else {
+<<<<<<< HEAD
             alert('Email or Password not long enough')
+=======
+            setState(prevState => ({
+                ...prevState,
+                'errorMessage' : 'Email, and / or Password is not long enough'
+            }))
+>>>>>>> main
         }
     }
 
@@ -85,44 +101,58 @@ function Login({history ,...props}) {
             Login
             </Typography>
             <form className={styles.form} noValidate>
-                <TextField 
-                    type="email"
-                    name="email"
-                    id="email"
-                    aria-describedby="emailHelp"
-                    placeholder="Enter Email"
-                    value={state.email}
-                    onChange={handleChange}
-                    variant="outlined"
-                    margin="normal"
-                    label="Email Address"
-                    required
-                    fullWidth
-                    autoFocus
-                />
-                <TextField 
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter Password"
-                    value={state.password}
-                    onChange={handleChange}
-                    variant="outlined"
-                    margin="normal"
-                    label="Password"
-                    required
-                    fullWidth
-                />
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={styles.submit}
-                    onClick={handleSubmitClick}
-                >
-                    Login
-                </Button>
+                <Grid container spacing={2}>
+                    <FormControl>
+                        { state.errorMessage &&
+                            <FormHelperText id="my-helper-text" error={true}> { state.errorMessage } </FormHelperText> }
+                        { state.successMessage &&
+                            <FormHelperText id="my-helper-text"> { state.successMessage } </FormHelperText> }
+                    </FormControl>
+                    <Grid item xs={12}>
+                        <TextField 
+                            type="email"
+                            name="email"
+                            id="email"
+                            aria-describedby="emailHelp"
+                            placeholder="Enter Email"
+                            value={state.email}
+                            onChange={handleChange}
+                            variant="outlined"
+                            margin="normal"
+                            label="Email Address"
+                            required
+                            fullWidth
+                            autoFocus
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField 
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter Password"
+                            value={state.password}
+                            onChange={handleChange}
+                            variant="outlined"
+                            margin="normal"
+                            label="Password"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={styles.submit}
+                            onClick={handleSubmitClick}
+                        >
+                            Login
+                        </Button>
+                    </Grid>
+                </Grid>
             </form>
         </div>
     </Container>

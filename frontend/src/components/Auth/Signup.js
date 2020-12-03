@@ -10,6 +10,8 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { FormControl } from '@material-ui/core';
+import { FormHelperText } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -56,29 +58,49 @@ function Signup({history,...props}) {
                 if(response.status === 200){
                     setState(prevState => ({
                         ...prevState,
-                        'successMessage' : 'Registration successful. Redirecting to home page..'
+                        'successMessage' : 'Registration successful. Redirecting to login page...'
                     }))
-                    history.push("/Dashboard");
-                } else{
-                    alert("Some error occurred");
+                    history.push("/Login");
+                } else {
+                    setState(prevState => ({
+                        ...prevState,
+                        'errorMessage' : 'Some error occurred'
+                    }))
                 }
             })
             .catch(function (error) {
-                alert(error);
+                var theError = JSON.parse( error.response.request.response );
+                setState(prevState => ({
+                    ...prevState,
+                    'errorMessage' : theError.errors[0].msg
+                }))
             });
     }
 
     const handleSubmitClick = (e) => {
         e.preventDefault();
         if (state.password === state.confirmPassword) {
-            if (state.email.length > 0 && state.password.length > 0 &&
+            if (state.email.length > 5 && state.password.length > 8 &&
             state.name.length > 0 ) {
                 sendDetailsToServer()
             } else {
+<<<<<<< HEAD
                 alert('Name, Email, or Password are not long enough')
             }
         } else {
             alert('Passwords do not match');
+=======
+                setState(prevState => ({
+                    ...prevState,
+                    'errorMessage' : 'Name, Email, and / or Password is not long enough'
+                }))
+            }
+        } else {
+            setState(prevState => ({
+                ...prevState,
+                'errorMessage' : 'Passwords do not match'
+            }))
+>>>>>>> main
         }
     }
 
@@ -91,6 +113,12 @@ function Signup({history,...props}) {
                 </Typography>
                 <form className={styles.form} noValidate>
                     <Grid container spacing={2}>
+                        <FormControl>
+                            { state.errorMessage &&
+                                <FormHelperText id="my-helper-text" error={true}> { state.errorMessage } </FormHelperText> }
+                            { state.successMessage &&
+                                <FormHelperText id="my-helper-text"> { state.successMessage } </FormHelperText> }
+                        </FormControl>
                         <Grid item xs={12}>
                             <TextField 
                                 type="name"
