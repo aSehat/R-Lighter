@@ -25,6 +25,7 @@
   "homepage": "https://github.com/aSehat/MITR-Project#readme",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "axios": "^0.21.0",
     "bcryptjs": "^2.4.3",
     "bibtex-parse": "^2.1.0",
     "config": "^3.3.1",

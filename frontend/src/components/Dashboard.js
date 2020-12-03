@@ -23,6 +23,14 @@ const getProjects = (async () => {
   return result;
 })
 
+const validatePdf = (async (url) => {
+  const result = await axios.get("/api/pdf/checkValidPdf", {params: {url: url}}).then(res => {
+    console.log(res.headers)
+    return true;
+  }).catch(err => {
+    console.log(err);
+  })
+})
 
 // infinite scroll or pagination?
 // kris would like to use infinite scroll to lazily load annotations

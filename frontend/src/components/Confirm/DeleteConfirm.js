@@ -5,6 +5,17 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 
+/*
+Delete Confirm Component
+opens up a popup in which the user can choose to confirm or cancel their deletion action
+
+Props:
+onClose: (function handles the confirmation. if a parameter "value" is passed to the function, it assumes that you wish to confirm the action)
+valueProp: the paramater passed into onClose (can pass in a boolean or a specific state value). provided as a prop from parent component
+deleteLabel: title of delete confirmation page
+deleteMessage: message provided by delete confirmation page
+other: other arguments provided to the prop
+*/ 
 function DeleteConfirm(props) {
   const { onClose, value: valueProp, open, deleteLabel, deleteMessage, ...other } = props;
   const [value, setValue] = React.useState(valueProp);
