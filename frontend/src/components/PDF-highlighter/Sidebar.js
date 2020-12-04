@@ -2,9 +2,6 @@ import React, { useEffect } from "react";
 import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteConfirm from '../Confirm/DeleteConfirm';
-import PropertyForm from '../PDF-highlighter/PropertyForm';
-import ResourceForm from '../PDF-highlighter/ResourceForm';
-import EditIcon from '@material-ui/icons/Edit';
 import Typography from '@material-ui/core/Typography';
 import type { T_Highlight } from "react-pdf-highlighter/src/types";
 
@@ -47,23 +44,15 @@ const updateHash = highlight => {
 function Sidebar({ highlights, resources, classes, deleteResource, editResource }: Props) {
   const styleclasses = useStyles();
   const [deleteValue, setDeleteValue] = React.useState(null);
-  const [editValue, setEditValue] = React.useState(null);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
-  const [editOpen, setEditOpen] = React.useState(false);
 
   const deleteHighlight = (highlight) => {
     setDeleteValue(highlight);
   }
 
-  const editHighlight = (highlight) => {
-    setEditValue(highlight);
-  }
-
   const handleOpen = (openLabel) => {
     if(openLabel === "delete"){
       setDeleteOpen(true);
-    } else if (openLabel == "edit"){
-      setEditOpen(true);
     }
   };
 
@@ -73,12 +62,6 @@ function Sidebar({ highlights, resources, classes, deleteResource, editResource 
     }
   }, [deleteValue])
 
-  useEffect(() => {
-    if (editValue){
-      handleOpen("edit");
-    }
-  }, [editValue])
-
   const handleDeleteClose = (newValue) => {
     setDeleteOpen(false);
     setDeleteValue(null);
@@ -86,14 +69,6 @@ function Sidebar({ highlights, resources, classes, deleteResource, editResource 
       deleteResource(newValue);
     }
   };
-
-  const handleEditClose = (newValue) => {
-    setEditOpen(false);
-    setEditValue(null);
-    if (newValue) {
-      editResource(newValue);
-    }
-  }
 
   return (
     <>

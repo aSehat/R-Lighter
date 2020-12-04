@@ -39,7 +39,7 @@ class Highlight extends Component<Props> {
       resource,
       isScrolledTo
     } = this.props;
-    const { rects, boundingRect } = position;
+    const { rects } = position;
 
     return (
       <div

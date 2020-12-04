@@ -20,7 +20,7 @@ const SaveAnnotBtn = (props) => {
     <div>
       <Fab 
         href='#'
-        color="primary" aria-label="export" className={classes.margin, classes.fab}  
+        color="primary" aria-label="export" className={classes.margin + ' ' + classes.fab}  
         onClick={() => props.onClick()}>
         <GetAppIcon />
       </Fab>

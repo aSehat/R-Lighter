@@ -12,7 +12,6 @@ import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 
 import type { T_LTWH } from "../types.js";
-const { getKeys } = require('../../utils/utils');
 
 type Props = {
   position: {
@@ -85,9 +84,6 @@ class ResourceForm extends Component<Props> {
 
   render() {
     const {
-      onClick,
-      onMouseOver,
-      onMouseOut,
       onConfirm,
       resources,
       classes

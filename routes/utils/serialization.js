@@ -1,7 +1,5 @@
-const Resource = require('../../models/Resource');
-const Project = require('../../models/Project');
 const N3 = require('n3');
-const { DataFactory, Store } = N3;
+const { DataFactory } = N3;
 const { namedNode, literal, quad } = DataFactory;
 const moment = require('moment');
 const bibtexParser = require('bibtex-parse');

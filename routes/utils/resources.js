@@ -1,5 +1,4 @@
 const Resource = require('../../models/Resource');
-const Project = require('../../models/Project');
 var ObjectId = require('mongodb').ObjectID;
 
 const getResourcesById = async (resourceIds) => {
@@ -8,7 +7,7 @@ const getResourcesById = async (resourceIds) => {
         const resources = await Resource.find({_id: {$in: resourceIdObjects}});
         return Promise.resolve(resources);
     }catch (err){
-        console.log(err.message);
+        console.log(err);
         return Promise.reject("Server Error");
     } 
 }
