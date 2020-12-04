@@ -73,14 +73,17 @@ const createPDFResource = async (pdf, prefix, language, mainpdfUri, store) => {
         }
         for(const attribute in citation){
             if(attribute === 'AUTHOR'){
-                const author = citation.AUTHOR
-                const authorid = author.split(". ").join("").toLowerCase()
-                await createAuthorResource(authorid, author, store);
-                store.addQuad(quad(
-                    namedNode(pdfUri),
-                    namedNode("dcterms:creator"),
-                    namedNode(":"+authorid)
-                ))
+                const authorString = citation.AUTHOR
+                const authors = authorString.split("and");
+                authors.forEach(async author => {
+                    const authorid = author.split(". ").join("").toLowerCase().replace(/ /g, "").trim()
+                    await createAuthorResource(authorid, author.trim(), store);
+                    store.addQuad(quad(
+                        namedNode(pdfUri),
+                        namedNode("dcterms:creator"),
+                        namedNode(":"+authorid)
+                    ))    
+                })
             }
             else if(attribute === 'TITLE'){
                 store.addQuad(quad(
@@ -310,6 +313,43 @@ const createDatasetResource = async (project, prefix, user, store) => {
     return Promise.resolve()
 }
 
+const createLocationResource = async (prefix, annotationUri, annotation, store) => {
+    const locationid = ":l" + String(Math.random()).slice(2)
+    annotation.position.rects.forEach(rect => {
+        const rectid = prefix + "/rect#" + rect._id
+        store.addQuad(quad(
+            namedNode(locationid),
+            namedNode(":rects"),
+            namedNode(rectid)
+        ));
+        store.addQuad(quad(
+            namedNode(rectid),
+            namedNode(":x1"),
+            literal(rect.x1)
+        ));
+        store.addQuad(quad(
+            namedNode(rectid),
+            namedNode(":y1"),
+            literal(rect.y1)
+        ));
+        store.addQuad(quad(
+            namedNode(rectid),
+            namedNode(":x2"),
+            literal(rect.x2)
+        ));
+        store.addQuad(quad(
+            namedNode(rectid),
+            namedNode(":y2"),
+            literal(rect.y2)
+        ));
+        store.addQuad(quad(
+            namedNode(annotationUri),
+            namedNode(":position"),
+            namedNode(locationid)
+        ))
+    })
+}
+
 const createAnnotationResource = async (project, prefix, pdfResourcesUri, annotations, store) => {
     annotations.forEach(element => {
         const id = element._id;
@@ -330,6 +370,7 @@ const createAnnotationResource = async (project, prefix, pdfResourcesUri, annota
             namedNode("prov:hadPrimarySource"),
             namedNode(pdfResourcesUri)
         ));
+        createLocationResource(prefix, resourceUri, element, store);
     });
 
     return Promise.resolve();
