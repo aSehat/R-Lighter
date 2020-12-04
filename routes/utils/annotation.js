@@ -1,6 +1,5 @@
 var ObjectId = require('mongodb').ObjectID;
 const Annotation = require('../../models/Annotation');
-const Resource = require('../../models/Resource');
 const Project = require('../../models/Project');
 
 
@@ -10,7 +9,7 @@ const getAnnotationsById = async (annotationIds) => {
         const annotations = await Annotation.find({_id: {$in: annotationIdObjects}});
         return Promise.resolve(annotations);
     }catch (err){
-        console.log(err.message);
+        console.log(err);
         return Promise.reject("Server Error");
     } 
 }

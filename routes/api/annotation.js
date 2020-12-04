@@ -1,15 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
-const {check, validationResult} = require('express-validator');
+const {validationResult} = require('express-validator');
 const Annotation = require('../../models/Annotation');
 const Project = require('../../models/Project');
 const Resource = require('../../models/Resource');
-const {createResources} = require('../utils/resources');
-const {updateProjectResourcesAnnotations} = require('../utils/project');
 const {deleteAnnotationsById} = require("../utils/annotation")
-const resources = require('../utils/resources');
-const project = require('../utils/project');
 var ObjectId = require('mongodb').ObjectID;
 
 

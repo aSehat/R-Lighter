@@ -30,10 +30,6 @@ function DeleteConfirm(props) {
     onClose(value);
   };
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-
   return (
     <Dialog
       disableBackdropClick

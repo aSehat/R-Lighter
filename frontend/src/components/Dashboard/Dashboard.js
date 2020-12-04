@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import DashboardListHeader from "./DashboardListHeader";
 import ProjectList from "./DashboardProjectList";
 import axios from 'axios';
-// import {ObjectID} from 'bson';
 import { useTable } from 'react-table';
 import Table from '@material-ui/core/Table';
 import { withRouter } from 'react-router-dom';
@@ -10,8 +9,8 @@ import Paper from '@material-ui/core/Paper';
 import ProjectDialog from './ProjectDialog';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
-import AddProjectBtn from './layout/AddProjectBtn';
-import './style/Dashboard.css';
+import AddProjectBtn from '../layout/AddProjectBtn';
+import '../style/Dashboard.css';
 
 const getProjects = (async () => {
   let headers = {
@@ -62,7 +61,7 @@ function Dashboard({history,...props}) {
     setProjectsList();
   }, []);
 
-  const editButton = (row) => {
+  const editButton = useCallback((row) => {
     return (<InfoOutlinedIcon
       className="edit-project"
       variant="contained"
@@ -71,7 +70,7 @@ function Dashboard({history,...props}) {
   >
       Edit
   </InfoOutlinedIcon>);
-  }
+  }, [])
 
   // take the array of projects & add the edit button to each row
   // React will reload the table when any of the underlying data changes
@@ -91,7 +90,7 @@ function Dashboard({history,...props}) {
       })
     return projectsList;
   },
-    [projects]
+    [projects, editButton]
   );
 
   // table headers
@@ -142,7 +141,6 @@ function Dashboard({history,...props}) {
 
 
   const getProjectSettings = ((project) => {
-    console.log(project);
     setProjectSettings(project);
   })
 
@@ -151,11 +149,11 @@ function Dashboard({history,...props}) {
     if (projectSettings && !openUpdate) {
       handleClickOpen("Update");
     }
-  }, [projectSettings]);
+  }, [projectSettings, openUpdate]);
 
   // handles which popup gets opened (create or update)
   const handleClickOpen = (type) => {
-    if(type == "Create"){
+    if(type === "Create"){
       setOpenCreate(true);
     } else if (type === "Update"){
       setOpenUpdate(true);
@@ -165,7 +163,7 @@ function Dashboard({history,...props}) {
   // properly closes the popup & clears the field data
   const handleClose = (type) => {
     setProjectSettings(null);
-    if(type == "Create"){
+    if(type === "Create"){
       setOpenCreate(false);
     } else if (type === "Update"){
       setOpenUpdate(false);
@@ -185,7 +183,7 @@ function Dashboard({history,...props}) {
     if (newProjCreated) {
       history.push("/project/" + result._id);
     } else {
-      // update the table
+      window.location = "/Dashboard";
     }
   };
 
@@ -198,13 +196,11 @@ function Dashboard({history,...props}) {
     const options = {
       headers: {"x-auth-token": localStorage.getItem("token")}
     }
-    const result = await axios.delete('/api/project/'+project._id, options).then(res => {
-      console.log(res.data);
+    await axios.delete('/api/project/'+project._id, options).then(res => {
       return res.data;
     });
-    return result;
+    window.location = "/Dashboard";
   }
-
 
   return (
     <div>

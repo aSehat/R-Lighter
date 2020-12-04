@@ -68,7 +68,7 @@ export default function BibTex(props) {
         event.preventDefault();
         try{
           const result = bibtexParser.entries(bibtex)
-          if(result.length == 0){
+          if(result.length === 0){
             setError(true);
             setErrorMessage("Invalid BibTex Citation!");
           } else {
@@ -112,7 +112,7 @@ export default function BibTex(props) {
     <div>
       <Fab 
         href='#'
-        color="primary" aria-label="bibtex" className={classes.margin, classes.fab}  
+        color="primary" aria-label="bibtex" className={classes.margin + ' ' + classes.fab}  
         onClick={handleOpen}
       >
         B

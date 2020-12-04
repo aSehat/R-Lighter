@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import '../../App.css';
 import {Link} from 'react-router-dom';
 
@@ -33,37 +33,6 @@ const useStyles = makeStyles((theme) => ({
     }
   },
 }));
-
-const authLinks = (
-  <ul>
-    <li>
-      <Link to='/Dashboard'>
-        <i></i>{' '}
-        <span>Dashboard</span>
-      </Link>
-    </li>
-    <li>
-      <a /*onClick={logout}*/ href='#!'>
-        <i ></i>{' '}
-        <span>Logout</span>
-      </a>
-    </li>
-  </ul>
-);
-
-const guestLinks = (
-  <ul>
-    <li>
-      <a href='#!'>Home</a>
-    </li>
-    <li>
-      <Link to='/Signup'>Sign Up</Link>
-    </li>
-    <li>
-      <Link to='/Login'>Login</Link>
-    </li>
-  </ul>
-);
 
 export default function Nav() {
   const classes = useStyles();

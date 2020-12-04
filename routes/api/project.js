@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
-const {check, validationResult} = require('express-validator');
+const {validationResult} = require('express-validator');
 const Project = require('../../models/Project');
-const {getAnnotationsById} = require('../utils/annotation');
 const {getResourceNamesById} = require('../utils/resources');
 
 // @route       POST api/project

@@ -19,7 +19,7 @@ const AddProjectBtn = (props) => {
     <div>
       <Fab 
         href='#'
-        color="primary" aria-label="add" className='modal-trigger' className={classes.margin, classes.fab}  
+        color="primary" aria-label="add" className={'modal-trigger ' + classes.margin + ' ' + classes.fab }  
         onClick={props.open}>
         <AddIcon />
       </Fab>
