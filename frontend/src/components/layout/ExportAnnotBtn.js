@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +22,7 @@ const SaveAnnotBtn = (props) => {
         href='#'
         color="primary" aria-label="export" className={classes.margin + ' ' + classes.fab}  
         onClick={() => props.onClick()}>
-        <ExitToAppIcon />
+        <GetAppIcon />
       </Fab>
     </div>
   );

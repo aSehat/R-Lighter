@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteConfirm from '../Confirm/DeleteConfirm';
+import Typography from '@material-ui/core/Typography';
 import type { T_Highlight } from "react-pdf-highlighter/src/types";
 
 const useStyles = makeStyles((theme) => ({
@@ -19,6 +20,12 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       color: "black"
     }
+  }, 
+  subsection: {
+    fontWeight: 'bold'
+  }, 
+  highlightInfo: {
+    marginTop: '10px'
   }
 }))
 
@@ -34,7 +41,7 @@ const updateHash = highlight => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
-function Sidebar({ highlights, resources, classes, toggleDocument, resetHighlights, deleteResource }: Props) {
+function Sidebar({ highlights, resources, classes, deleteResource, editResource }: Props) {
   const styleclasses = useStyles();
   const [deleteValue, setDeleteValue] = React.useState(null);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
@@ -101,11 +108,28 @@ function Sidebar({ highlights, resources, classes, toggleDocument, resetHighligh
           >
             <div>
               <DeleteIcon id={highlight.id} className={styleclasses.deleteResource} onClick={() => deleteHighlight(highlight)}/>
-          <strong>{highlight.resource.type} {highlight.resource.resourceName}</strong>
+              {/* <EditIcon className={styleclasses.deleteResource} onClick={() => editHighlight(highlight)}/> */}
+              <Typography className={styleclasses.subsection} variant="h5" component="h2">
+                {highlight.resource.resourceName}
+              </Typography>
               {highlight.resource ? (
+                <div className={styleclasses.highlightInfo}>
+                <Typography className={styleclasses.subsection} variant="subtitle2" component="h2">
+                    Annotation Type
+                </Typography>
+                <Typography variant="body2" component="p">
+                  {highlight.resource.type}
+                </Typography>
+                <Typography className={styleclasses.subsection} variant="subtitle2" component="h2">
+                    Property
+                </Typography>
+                <Typography variant="body2" component="p">
+                {highlight.resource.property.label}
+                </Typography>
                 <blockquote style={{ marginTop: "0.5rem" }}>
                   {`${highlight.content.text.slice(0, 90).trim()}…`}
                 </blockquote>
+                </div>
               ) : null}
               {highlight.content.image ? (
                 <div
@@ -122,14 +146,6 @@ function Sidebar({ highlights, resources, classes, toggleDocument, resetHighligh
           </li>
         ))}
       </ul>
-      <div style={{ padding: "1rem" }}>
-        <button onClick={toggleDocument}>Toggle PDF document</button>
-      </div>
-      {highlights.length > 0 ? (
-        <div style={{ padding: "1rem" }}>
-          <button onClick={resetHighlights}>Reset highlights</button>
-        </div>
-      ) : null}
     </div>
     </>
   );
