@@ -29,5 +29,5 @@
 }
 
 .Highlight--scrolledTo .Highlight__part {
-  background: #ff4141;
+  background: #ff4141 !important;
 }

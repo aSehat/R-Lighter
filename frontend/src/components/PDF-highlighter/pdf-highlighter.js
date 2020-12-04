@@ -13,7 +13,6 @@ import BibTex from '../layout/BibTex';
 import {
   PdfLoader,
   PdfHighlighter,
-  Highlight,
   Popup,
   AreaHighlight,
   setPdfWorker
@@ -22,6 +21,7 @@ import {
 
 import Tip from "./Tip";
 import Spinner from "./Spinner";
+import Highlight from "./Highlight"
 import Sidebar from "./Sidebar";
 
 import type {
@@ -341,6 +341,7 @@ class PDFHighlights extends Component<Props, State> {
                     <Highlight
                       isScrolledTo={isScrolledTo}
                       position={highlight.position}
+                      resource={highlight.resource}
                       comment={highlight ? highlight.resource: null}
                     />
                   ) : (
