@@ -7,16 +7,15 @@ import { useTable } from 'react-table';
 import Table from '@material-ui/core/Table';
 import { withRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import CreateProjectDialog from './CreateProjectDialog';
+import ProjectDialog from './ProjectDialog';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 import AddProjectBtn from './layout/AddProjectBtn';
 import './style/Dashboard.css';
-// this function will be an axios call to one of the routes
-// TODO: what is the max number of documents that the database will return?
+
 const getProjects = (async () => {
-  //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
   let headers = {
-    'x-auth-token': localStorage.getItem("token") 
+    'x-auth-token': localStorage.getItem("token")
   };
   const result = await axios.get('/api/project', {headers: headers}).then(res => {
     return res.data
@@ -25,37 +24,37 @@ const getProjects = (async () => {
 })
 
 
-// TODO: implementation of infinite scroll
+// infinite scroll or pagination?
+// kris would like to use infinite scroll to lazily load annotations
 function dynamicLoad(setProjects) {
   //
 }
 
 
 function Dashboard({history,...props}) {
-  // to avoid ambiguity, ascending means to begin with the smallest/first element (0->9, A->Z, etc)
   const [sortBy, setSortBy] = useState({
     attribute: "date",
     ascending: true,
   });
 
-  // the initial value for projects is expensive to execute, so put it in a function (apparently React stops
-  //  unnecessary functions before they execute, but not unnecessary statements)
+  // this is the array that holds the data used to generate the table
   const [projects, setProjects] = useState(() => {
-    // an array of project documents from the database
     return [];
   });
 
+  // retrieve the current user's projects from the database, strip out
+  //  unnecessary information, and assign it to the projects array
   useEffect(() => {
     const setProjectsList = async () => {
       let db_ret = await getProjects();
       let projects_relevant_info = db_ret.map((current, move) => {
-        // TODO: do we care about the owner?
         return ({
           "_id": current._id,
           "name": current.name,
           "link": current.link,
           "language": current.language,
-          "date": current.date
+          "date": current.date,
+          "prefix": current.prefix,
         });
       });
       setProjects(projects_relevant_info);
@@ -63,15 +62,20 @@ function Dashboard({history,...props}) {
     setProjectsList();
   }, []);
 
-  // TODO: write the code to update the db with a new project
-  //  this should also probably redirect and be async??
-  let updateDB = (newProject) => {
-    console.log(newProject);
-    console.log("if only it were that easy");
-  };
+  const editButton = (row) => {
+    return (<InfoOutlinedIcon
+      className="edit-project"
+      variant="contained"
+      color="primary"
+      onClick={(event) => {event.stopPropagation(); getProjectSettings(row)}}
+  >
+      Edit
+  </InfoOutlinedIcon>);
+  }
 
-
-  // table data
+  // take the array of projects & add the edit button to each row
+  // React will reload the table when any of the underlying data changes
+  //  (useMemo is solely an optimization)
   const data = React.useMemo(
     () => {
       const projectsList = projects.map((current, step) => {
@@ -80,7 +84,9 @@ function Dashboard({history,...props}) {
           "name": current.name,
           "link": current.link,
           "language": current.language,
-          "date": current.date
+          "date": current.date,
+          "prefix": current.prefix,
+          "editButton": editButton(current),
         });
       })
     return projectsList;
@@ -98,11 +104,14 @@ function Dashboard({history,...props}) {
         Header: "Language",
         accessor: "language"
       },{
-        Header: "Date",
+        Header: "Date Created",
         accessor: "date"
       }, {
         Header: "Link",
         accessor: "link"
+      }, {
+        Header: "",
+        accessor: "editButton"
       }
     ],
     []
@@ -110,7 +119,7 @@ function Dashboard({history,...props}) {
 
 
   const tableInstance = useTable({columns, data});
-  // useTable returns a whole bunch of stuff
+  // weird JS unpacking syntax b/c useTable returns a lot of stuff
   const {
     getTableProps,
     getTableBodyProps,
@@ -119,51 +128,94 @@ function Dashboard({history,...props}) {
     prepareRow,
   } = tableInstance;
 
+  // redirects the user to the PDF annotation page
+  //  (this is called after creating a new project)
   const getProject = (info) => {
     history.push("/project/" + info.original._id);
   }
 
+  // the following 2 are to keep track of which modal popup is currently open
+  const [openCreate, setOpenCreate] = React.useState(false);
+  const [openUpdate, setOpenUpdate] = React.useState(false);
+  // stores a single project's information (used to store the fields of one of the popups)
+  const [projectSettings, setProjectSettings] = React.useState(null);
 
-  const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const getProjectSettings = ((project) => {
+    console.log(project);
+    setProjectSettings(project);
+  })
+
+  // if the fields change and the update modal popup is not already open, then open it
+  useEffect(() => {
+    if (projectSettings && !openUpdate) {
+      handleClickOpen("Update");
+    }
+  }, [projectSettings]);
+
+  // handles which popup gets opened (create or update)
+  const handleClickOpen = (type) => {
+    if(type == "Create"){
+      setOpenCreate(true);
+    } else if (type === "Update"){
+      setOpenUpdate(true);
+    }
   };
 
-  const handleClose = (value) => {
-    setOpen(false);
+  // properly closes the popup & clears the field data
+  const handleClose = (type) => {
+    setProjectSettings(null);
+    if(type == "Create"){
+      setOpenCreate(false);
+    } else if (type === "Update"){
+      setOpenUpdate(false);
+    }
   };
 
-  const createProject = async (project) => {
+  // take the field data from the popup, send it to the backend (which then sends it to the database)
+  //  then redirect the user to the PDF annotation page, loading the PDF URL that the user just provided
+  // TODO: error handling!
+  const createProject = async (project, newProjCreated) => {
     const headers = {
       "x-auth-token": localStorage.getItem("token")
-    }
-    //TODO: this is temporary code to read from a hardcoded json file, replace with the real deal
+    };
     const result = await axios.post('/api/project', project, {headers: headers}).then(res => {
-      return res.data
-    })
+      return res.data;
+    });
+    if (newProjCreated) {
+      history.push("/project/" + result._id);
+    } else {
+      // update the table
+    }
+  };
+
+  // to update the table without calling the db again, i need the index (in the projects array) of the row that just got deleted
+  //  if pagination stores the entire table in memory all the time, then (max_rows_per_page*page_num-1)+row_num == index in projects array
+  //  if pagination does NOT store the entire table in memory all the time, then row_num == index in projects array?
+  //    the above formula is also probably true for infinite scroll
+  // once I have that index, I can call projects.delete (or whatever the array method is called) and the table should automatically update
+  const deleteProject = async (project) => {
+    const options = {
+      headers: {"x-auth-token": localStorage.getItem("token")}
+    }
+    const result = await axios.delete('/api/project/'+project._id, options).then(res => {
+      console.log(res.data);
+      return res.data;
+    });
     return result;
   }
 
-  // I don't think this is necessary, since a username will never change without a forced logout and redirect
-  // const [user, setUser] = useState(() => getUser());
-
-  const handlePopupFunctions = {
-    handleclickopen: handleClickOpen,
-    handleclose: handleClose,
-    open: open,
-    onconfirm: createProject
-  }
 
   return (
     <div>
       <div className="projects">
+      <AddProjectBtn open={() => handleClickOpen("Create")}/>
       <Table {...getTableProps()} component={Paper}>
         <DashboardListHeader headergroups={headerGroups} sortby={sortBy} setsortby={(newState) => setSortBy(newState)}/>
-        <ProjectList getproject={getProject} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
+        <ProjectList getproject={getProject} getProjectSettings={(project) => getProjectSettings(project)} gettablebodyprops={getTableBodyProps} rows={rows} preparerow={prepareRow} sortby={sortBy} projects={projects} loadmore={() => dynamicLoad(setProjects)}/>
       </Table>
-      <CreateProjectDialog  open={open} onConfirm={(project) => createProject(project)} onClose={() => handleClose()} />
-      <AddProjectBtn open={handleClickOpen}/>
+      <ProjectDialog inputType="Create" open={openCreate} onConfirm={(project) => createProject(project, true)} onClose={() => handleClose("Create")} />
+      <ProjectDialog inputType="Update" inputProjectFields={projectSettings} open={openUpdate} onDelete={(project) => deleteProject(project)} onConfirm={(project) => createProject(project, false)} onClose={() => handleClose("Update")} />
       </div>
     </div>
   );
