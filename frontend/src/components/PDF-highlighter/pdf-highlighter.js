@@ -182,6 +182,15 @@ class PDFHighlights extends Component<Props, State> {
         }
       ); 
     }
+    if(highlight.resource.type === 'Class'){
+      this.setState({
+        classes: this.state.classes.filter(resource => resource !== highlight.resource.resourceName)
+      })
+    }else if(highlight.resource.type !== 'Property'){
+      this.setState({
+        resources: this.state.resources.filter(resource => resource !== highlight.resource.resourceName)
+      })
+    }
     var remainingHighlights = [];
     var childrenHighlights = [];
     var deletedHighlights = [];
