@@ -5,6 +5,7 @@ import DeleteConfirm from '../Confirm/DeleteConfirm';
 import PropertyForm from '../PDF-highlighter/PropertyForm';
 import ResourceForm from '../PDF-highlighter/ResourceForm';
 import EditIcon from '@material-ui/icons/Edit';
+import Typography from '@material-ui/core/Typography';
 import type { T_Highlight } from "react-pdf-highlighter/src/types";
 
 const useStyles = makeStyles((theme) => ({
@@ -22,6 +23,12 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       color: "black"
     }
+  }, 
+  subsection: {
+    fontWeight: 'bold'
+  }, 
+  highlightInfo: {
+    marginTop: '10px'
   }
 }))
 
@@ -37,7 +44,7 @@ const updateHash = highlight => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
-function Sidebar({ highlights, resources, classes, toggleDocument, resetHighlights, deleteResource, editResource }: Props) {
+function Sidebar({ highlights, resources, classes, deleteResource, editResource }: Props) {
   const styleclasses = useStyles();
   const [deleteValue, setDeleteValue] = React.useState(null);
   const [editValue, setEditValue] = React.useState(null);
@@ -127,11 +134,27 @@ function Sidebar({ highlights, resources, classes, toggleDocument, resetHighligh
             <div>
               <DeleteIcon id={highlight.id} className={styleclasses.deleteResource} onClick={() => deleteHighlight(highlight)}/>
               {/* <EditIcon className={styleclasses.deleteResource} onClick={() => editHighlight(highlight)}/> */}
-          <strong>{highlight.resource.type} {highlight.resource.resourceName}</strong>
+              <Typography className={styleclasses.subsection} variant="h5" component="h2">
+                {highlight.resource.resourceName}
+              </Typography>
               {highlight.resource ? (
+                <div className={styleclasses.highlightInfo}>
+                <Typography className={styleclasses.subsection} variant="subtitle2" component="h2">
+                    Annotation Type
+                </Typography>
+                <Typography variant="body2" component="p">
+                  {highlight.resource.type}
+                </Typography>
+                <Typography className={styleclasses.subsection} variant="subtitle2" component="h2">
+                    Property
+                </Typography>
+                <Typography variant="body2" component="p">
+                {highlight.resource.property.label}
+                </Typography>
                 <blockquote style={{ marginTop: "0.5rem" }}>
                   {`${highlight.content.text.slice(0, 90).trim()}…`}
                 </blockquote>
+                </div>
               ) : null}
               {highlight.content.image ? (
                 <div

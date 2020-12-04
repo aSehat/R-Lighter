@@ -147,7 +147,7 @@ class PDFHighlights extends Component<Props, State> {
         bibtex: res.data.project.bibtex,
         url: "/api/pdf?url=" + res.data.project.link,
         highlights: savedAnnotations,
-        resources: res.data.resources,
+        resources: [...res.data.resources, ...res.data.classes],
         classes: ["Class",...res.data.classes] 
       })
     });
@@ -166,11 +166,10 @@ class PDFHighlights extends Component<Props, State> {
       this.setState({
         classes: [...classes, highlight.resource.resourceName]
       }) 
-    } else { // it's a resource instantiation
-      this.setState({
-        resources: [...resources, highlight.resource.resourceName]
-      })
     }
+    this.setState({
+      resources: [...resources, highlight.resource.resourceName]
+    })
   }
 
   async getAllDeleteAnnotations(highlight, highlights){ //returns all REMAINING HIGHLIGHTS
@@ -186,7 +185,8 @@ class PDFHighlights extends Component<Props, State> {
       this.setState({
         classes: this.state.classes.filter(resource => resource !== highlight.resource.resourceName)
       })
-    }else if(highlight.resource.type !== 'Property'){
+    }
+    if(highlight.resource.type !== 'Property'){
       this.setState({
         resources: this.state.resources.filter(resource => resource !== highlight.resource.resourceName)
       })
