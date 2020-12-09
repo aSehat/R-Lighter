@@ -13,22 +13,38 @@ import Button from '@material-ui/core/Button';
 
 import type { T_LTWH } from "../types.js";
 
+interface ResourceFormFields {
+  error: boolean,
+  errorMessage: string,
+  type: string,
+  resourceName: string,
+  property: {
+    label: string,
+    description: string
+  },
+  propertyType: string
+}
+
 type Props = {
-  position: {
+  position: {           //position of the highlighted text in the PDF
     boundingRect: T_LTWH,
     rects: Array<T_LTWH>
   },
-  onClick?: () => void,
-  onMouseOver?: () => void,
-  onMouseOut?: () => void,
+  onConfirm: (form: ResourceFormFields) => void,  // function takes in the resource form fields and 
+                                                  // creates the resource annotation on the PDF highlighter component
   content: {
-    text: string
+    text: string        //the highlighted text
   },
+  resources: string[],  //the list of all resource names created per project 
+  classes: string[],    //the list of all classes created per project
   isScrolledTo: boolean
 };
-
+/*
+  the Resource form popup to create a new resource.
+  see above for general prop types variables and types
+*/
 class ResourceForm extends Component<Props> {
-
+  
   constructor(props){
     super(props);
 
@@ -47,20 +63,23 @@ class ResourceForm extends Component<Props> {
       propertyType: ''
     }
   }
-
+  /* updates the resource name that is inputted into the resource form (textfield user inputs) */
   changeResourceName(event){
     this.setState({
       resourceName: event.target.value
     })
   }
-
+  /*updates the rdf:type resource*/
   changeType(inputValue){
     this.setState({
       type: inputValue
     })
     
   }
-
+  /*
+    updates the label or definition property of the resource (definition is indicated as description)
+    assumes that there are only 2 properties per resource 
+  */
   handleChange(event){
     const propertyVal = event.target.value;
     if(propertyVal === "label"){
@@ -94,6 +113,10 @@ class ResourceForm extends Component<Props> {
       <form
       className="resource-form"
       onSubmit={(event) => {
+        /*
+          Adds validation prior to resource being added to the current user's annotations
+          if the resource has already been created, an error will be returned to the user
+        */
         event.preventDefault();
         if (resources.includes(this.state.resourceName) || (this.state.type === "Class" && classes.includes(this.state.resourceName))){
           this.setState({
@@ -117,7 +140,7 @@ class ResourceForm extends Component<Props> {
             onInputChange={(_, newInputValue) => {
               this.changeType(newInputValue)}}
             id="Resource"
-            options={classes}
+            options={["Class"].concat(resources)}
             getOptionLabel={(option) => option}
             style={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="Resource Type" variant="outlined" required={true} />}

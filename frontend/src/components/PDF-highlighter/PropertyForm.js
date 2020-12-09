@@ -14,17 +14,29 @@ import Button from '@material-ui/core/Button';
 
 import type { T_LTWH } from "../types.js";
 
+interface PropertyFormFields {
+  error: boolean,
+  errorMessage: string,
+  type: string,
+  resourceName: string,
+  property: {
+    label: string,
+    description: string
+  },
+  propertyType: string
+}
+
 type Props = {
-  position: {
+  position: {           //position of the highlighted text in the PDF
     boundingRect: T_LTWH,
     rects: Array<T_LTWH>
   },
-  onClick?: () => void,
-  onMouseOver?: () => void,
-  onMouseOut?: () => void,
+  onConfirm: (form: PropertyFormFields) => void,  // function takes in the property form fields and 
+                                                  // creates the property annotation on the PDF highlighter component
   content: {
-    text: string
+    text: string        //the highlighted text
   },
+  resources: string[],  //the list of all resource names created per project 
   isScrolledTo: boolean
 };
 
@@ -48,6 +60,7 @@ class PropertyForm extends Component<Props> {
     }
   }
 
+  /* indicates the resource name in which the user is associating with the given highlight (autocomplete field)*/
   changeInstantiation(inputValue){
     this.setState({
       resourceName: inputValue
@@ -55,6 +68,10 @@ class PropertyForm extends Component<Props> {
     
   }
 
+  /*
+    updates the label or definition property of the resource (definition is indicated as description)
+    assumes that there are only 2 properties per resource 
+  */
   handleChange(event){
     const propertyVal = event.target.value;
     if(propertyVal === "label"){
@@ -88,6 +105,10 @@ class PropertyForm extends Component<Props> {
       <form
       className="form"
       onSubmit={event => {
+        /*
+          Adds validation prior to property being added to the current user's annotations
+          if the specified property has already been created, an error will be returned to the user
+        */
         event.preventDefault();
         const unusedProperty = highlights.filter((h) => {return h.resource.resourceName === this.state.resourceName && h.resource.property.label === this.state.propertyType})
         if(unusedProperty.length > 0){

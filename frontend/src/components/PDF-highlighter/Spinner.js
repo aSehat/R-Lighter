@@ -1,7 +1,7 @@
 import React from "react";
 
 import "../style/Spinner.css";
-
+/* Loading spinner provided by the PDF library */
 export default () => {
   return (
     <div

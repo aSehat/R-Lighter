@@ -16,7 +16,7 @@ const exportResources = async(project, prefix, pdfResourcesUri, projectResources
         const type = resourceInfo.type.replace(" ", "");
         const propertyType = resourceInfo.property.label
         const propertyText = annotation.content.text
-        var author = ":"+user.name;
+        var author = ":"+user.name.replace(/ /g, "");
         const resourceUri = ":"+name;
         store.addQuad(quad(
             namedNode(resourceUri),
@@ -39,10 +39,16 @@ const exportResources = async(project, prefix, pdfResourcesUri, projectResources
        }
 
        if(!seenResources[resourceUri]){
+            let rdftype = ""
+            if(type === "Class"){
+                rdftype = "owl:Class"
+            }else{
+                rdftype = ":"+type
+            }
             store.addQuad(quad(
                 namedNode(resourceUri),
                 namedNode("rdf:type"),
-                literal(type, project.language.toLowerCase())
+                namedNode(rdftype)
             ));
             store.addQuad(quad(
                 namedNode(resourceUri),
@@ -244,7 +250,7 @@ const createProjectResource = async (project, projectResourcesUri, user, store) 
     store.addQuad(quad(
         namedNode(projectResourcesUri),
         namedNode("dcterms:creator"),
-        namedNode(":"+user.name)
+        namedNode(":"+user.name.replace(/ /g, ""))
     ));
     store.addQuad(quad(
         namedNode(projectResourcesUri),
@@ -285,7 +291,7 @@ const createDatasetResource = async (project, prefix, user, store) => {
     store.addQuad(quad(
         namedNode(datasetdefinitionUri),
         namedNode("dcterms:creator"),
-        namedNode(":"+user.name)
+        namedNode(":"+user.name.replace(/ /g, ""))
     ));
     store.addQuad(quad(
         namedNode(datasetdefinitionUri),
@@ -412,6 +418,7 @@ const exportSerialization = async (project, annotations, user) => {
     });
     const pdfResourcesUri = prefix + "#" + "00000";
     const projectResourcesUri = prefix + "#" + primarySource;
+    const userId = user.name.replace(/ /g, "")
     //Project Resource
     await createProjectResource(project, projectResourcesUri, user, store);
     if(pdf.length > 0){
@@ -420,7 +427,7 @@ const exportSerialization = async (project, annotations, user) => {
         store.addQuad(quad(
             namedNode(pdfResourcesUri),
             namedNode("dcterms:creator"),
-            namedNode(":"+user.name)
+            namedNode(":"+userId)
         ));
         store.addQuad(quad(
             namedNode(pdfResourcesUri),
@@ -431,7 +438,7 @@ const exportSerialization = async (project, annotations, user) => {
     await createDatasetResource(project, prefix, user, store);
     await createAnnotationResource(project, prefix, pdfResourcesUri, annotations, store);
     await exportResources(project, prefix, pdfResourcesUri, projectResourcesUri, annotations, user, store);
-    await createAuthorResource(user.name.replace(" ", ""), user.name, store);
+    await createAuthorResource(userId, user.name, store);
 
     var output = "";
 
