@@ -41,7 +41,7 @@ const updateHash = highlight => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
-function Sidebar({ highlights, deleteResource }: Props) {
+function Sidebar({ highlights, classes, deleteResource }: Props) {
   const styleclasses = useStyles();
   const [deleteValue, setDeleteValue] = React.useState(null);
   const [deleteOpen, setDeleteOpen] = React.useState(false);

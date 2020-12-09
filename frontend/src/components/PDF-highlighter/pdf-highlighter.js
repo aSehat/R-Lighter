@@ -35,7 +35,7 @@ setPdfWorker(PDFWorker);
 type Props = {};
 
 type State = {
-  projectId: String
+  projectId: String,
   token: String,
   url: String,
   changedBibtex: Boolean,
