@@ -35,44 +35,53 @@ setPdfWorker(PDFWorker);
 type Props = {};
 
 type State = {
-  url: string,
+  projectId: String
+  token: String,
+  url: String,
+  changedBibtex: Boolean,
+  bibtex: String,
   highlights: Array<T_Highlight>,
-  classes: Array<String>,
-  resources: Array<String>,
-  properties: { id: {annotationid: string, name: string, resource: string}}
+  classes: String[],
+  resources: String[],
+  deletedHighlights: String[],
+  unsavedHighlights: String[],
 };
-
+/* Creates a temporary random id for new annotations (replaced in the backend MongoDB ObjectID) */
 const getNextId = () => String(Math.random()).slice(2);
 
+/* Grabs the ID of a given annotation from the URI to snap to the associated annotated text in the PDF viewer*/
 const parseIdFromHash = () =>
   document.location.hash.slice("#highlight-".length);
 
+/* Resets the document location, without a highlight URI */
 const resetHash = () => {
   document.location.hash = "";
 };
 
 class PDFHighlights extends Component<Props, State> {
   state = {
-    projectId: this.props.match.params.id,
-    token: localStorage.getItem("token"),
-    url: "",
-    changedBibtex: false,
-    bibtex: "",
-    unsavedHighlights: [],
-    deletedHighlights: [],
-    highlights: [],
-    classes: ["Class"],
-    resources: []
+    projectId: this.props.match.params.id, // the projectID as given from the queried uri
+    token: localStorage.getItem("token"),  // session id (token) for user auth
+    url: "",                               // url of the PDF
+    changedBibtex: false,                  // boolean used to determine if the user changed the bibtex
+    bibtex: "",                            // bibtex string  
+    unsavedHighlights: [],                 // new highlights created that are currently not saved in the database          
+    deletedHighlights: [],                 // highlights in which the user has deleted from the PDF viewer
+    highlights: [],                        // current visible highlights (including saved and unsaved)
+    classes: ["Class"],                    // list of class resources
+    resources: []                          // list of all resources currently visible in the PDF viewer
   };
 
   state: State;
 
+  // resets all the highlights (clears all highlights from the highlights list)
   resetHighlights = () => {
     this.setState({
       highlights: []
     });
   };
 
+  /*Scrolls to the given location of a selected highlight when the user clicks with any annotation from the sidebar*/
   scrollViewerTo = (highlight: any) => {};
 
   scrollToHighlightFromHash = () => {
@@ -83,6 +92,12 @@ class PDFHighlights extends Component<Props, State> {
     }
   };
 
+  /*
+    Save function calls the backend annotation endpoint to:
+    - save unsaved highlights
+    - delete highlights in the deletedHighlights array
+    - create/update bibtex citations
+  */
   save = () => {
     const deletedAnnotations = this.state.deletedHighlights.map((h) => h._id)
     const unsavedHighlights = this.state.unsavedHighlights.map((h) => {
@@ -90,7 +105,7 @@ class PDFHighlights extends Component<Props, State> {
       return rest;
     })
     let headers = {
-      'x-auth-token': this.state.token 
+      'x-auth-token': this.state.token // for authentication and user id
     };
     let requestBody = {}
     if(this.state.changedBibtex){
@@ -100,10 +115,16 @@ class PDFHighlights extends Component<Props, State> {
     }
     axios.post('/api/annotation', requestBody, {headers: headers});
     this.setState({
-      unsavedHighlights: []
+      unsavedHighlights: [] // unsaved highlights is reset after each save, as all unsaved highlights are already saved in the backend
     });
   }
 
+  /*
+    export function first saves the highlights. After it finishes 
+    saving all the highlights, another API call is made to /api/serialization 
+    to get the serialized string of the RDF file. This in turn is converted into a Blob object
+    which is the then downloaded to the user's browser as exportedResources.ttl 
+  */
   export = () => {
     this.save();
     let headers = {
@@ -121,7 +142,11 @@ class PDFHighlights extends Component<Props, State> {
     });
 }
 
-
+  /* 
+    calls the /api/project to grab all annotations related to the project Id. 
+    this function prepopulates the state with all the highlights, bibtex string, resource names, 
+    and classes into the state.
+  */
   componentDidMount() {
     window.addEventListener(
       "hashchange",
@@ -147,12 +172,17 @@ class PDFHighlights extends Component<Props, State> {
 
   }
 
+
   getHighlightById(id: string) {
     const { highlights } = this.state;
 
     return highlights.find(highlight => highlight.id === id);
   }
-
+  
+  /* 
+    Creates a new resource highlight (adds the resource name to the classes list 
+    if the resource is of type class, and adds the resource to the resoruces list)
+  */
   createNewResource(highlight){
     const {classes, resources} = this.state;
     if(highlight.resource.type === "Class"){
@@ -164,8 +194,17 @@ class PDFHighlights extends Component<Props, State> {
       resources: [...resources, highlight.resource.resourceName]
     })
   }
-
+  
+  /* 
+    Recursively determines which highlights to delete given the highlight to delete and the list of highlights.
+    If the highlight is class or resource annotation, then it will recursively delete all resources that stem from it, 
+    as well as the property annotations (property annotations are annotations that were made after the associated resource is created)
+  */
   async getAllDeleteAnnotations(highlight, highlights){ //returns all REMAINING HIGHLIGHTS
+    /*
+      Base case: if the highlight is a property or has no resource type (which is the rdf:type usually), 
+      then return this highlight as well as all remaining highlights that are not deleted 
+    */
     if(highlight.resource.type === "Property" || highlight.resource.type === ""){
       return Promise.resolve(
         {
@@ -174,6 +213,10 @@ class PDFHighlights extends Component<Props, State> {
         }
       ); 
     }
+    /* 
+      Filters the classes and resources list so that all 
+      highlights deleted are also deleted from these lists
+    */
     if(highlight.resource.type === 'Class'){
       this.setState({
         classes: this.state.classes.filter(resource => resource !== highlight.resource.resourceName)
@@ -187,6 +230,9 @@ class PDFHighlights extends Component<Props, State> {
     var remainingHighlights = [];
     var childrenHighlights = [];
     var deletedHighlights = [];
+    /* Iterates through all the highlights (annotations). it sorts the highlights into childrenHighlights, 
+       which are highlights referenced by the current highlight param (of which are deleted recursively), 
+       as well as the remainingHighlights, that are not deleted based on the immediate highlight param */
     highlights.forEach((h) => {
       if (h.id !== highlight.id && (h.resource.type === highlight.resource.resourceName || h.resource.resourceName === highlight.resource.resourceName)){
         childrenHighlights.push(h);
@@ -194,6 +240,7 @@ class PDFHighlights extends Component<Props, State> {
         remainingHighlights.push(h);
       }
     })
+    /* Recursive call for each child highlight. DeletedHighlights of the current depth are concatenated with deleted highlights from lower depths*/
     for(let i = 0; i < childrenHighlights.length; i++){
       let result = await this.getAllDeleteAnnotations(childrenHighlights[i], remainingHighlights);
       remainingHighlights = result.remainingHighlights;
@@ -203,6 +250,7 @@ class PDFHighlights extends Component<Props, State> {
     return Promise.resolve({remainingHighlights, deletedHighlights});  
   }
 
+  /* Deletes a given highlight as well as all resources and properties referenced by that given highlight recursively */
   async deleteResource(highlight){
     const {remainingHighlights, deletedHighlights}= await this.getAllDeleteAnnotations(highlight, this.state.highlights);
     const unsavedHighlights = remainingHighlights.filter(h => !h.saved); 
@@ -213,10 +261,9 @@ class PDFHighlights extends Component<Props, State> {
     })
   }
 
-  async editResource(highlight){
-    alert("here!");
-  }
-
+  /* 
+    Adds a created highlight to the highlights page, added the new highlight to the unsavedHighlights list (highlights that still need to be saved) 
+    as well as the full highlights list(what is displayed)*/
   addHighlight(highlight: T_NewHighlight) {
     const { highlights, unsavedHighlights } = this.state;
     const {content, position, resource } = highlight;
@@ -231,7 +278,7 @@ class PDFHighlights extends Component<Props, State> {
       highlights: [...highlights, newAnnotation],
     });
   }
-
+  /* Provided by the library. Allows users to update the area highlight box for screenshots */
   updateHighlight(highlightId: string, position: Object, content: Object) {
     this.setState({
       highlights: this.state.highlights.map(h => {
@@ -253,6 +300,7 @@ class PDFHighlights extends Component<Props, State> {
     });
   }
 
+  /* adds bibtex citations to the state if saved */
   handleBibtex = (bibtex) => {
     this.setState({
       bibtex: bibtex,
