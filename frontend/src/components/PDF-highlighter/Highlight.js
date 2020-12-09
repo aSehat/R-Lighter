@@ -20,7 +20,10 @@ type Props = {
   },
   isScrolledTo: boolean
 };
-
+/*
+  generates the different color highlights. The randomized number is seeded based on 
+  argument s (which is the resource name and type)
+*/
 const getRandomColorFromString = (s) => {
   const formattedLabel = s.replace(/ /g, "")
   let rng = seedrandom(formattedLabel)
@@ -29,6 +32,7 @@ const getRandomColorFromString = (s) => {
   return color;
 }
 
+//Component used to display the highlights on the PDF viewer.
 class Highlight extends Component<Props> {
   render() {
     const {
@@ -47,6 +51,8 @@ class Highlight extends Component<Props> {
       >
         {resource ? (
         <div className="Highlight__parts">
+          {/* By default, the resource highlight is colored via the getRandomColorFromString function 
+          (colors based off the inputted seed, of resource name and type) */}
           {rects.map((rect, index) => (
             <div
               onMouseOver={onMouseOver}
@@ -61,6 +67,8 @@ class Highlight extends Component<Props> {
 
         ) :  
         <div className="Highlight__parts">
+        {/* If the highlight is snapped to (if the user clicks on the associated annotation in the sidebar), 
+            the highlighted text will be noted in red*/}
         {rects.map((rect, index) => (
           <div
             onMouseOver={onMouseOver}

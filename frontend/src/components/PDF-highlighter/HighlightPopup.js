@@ -28,7 +28,10 @@ const useStyles = makeStyles({
         fontWeight: 'bold'
     }
   });
-
+/* 
+  When user hovers over highlights, the HighlighPopup component is shown, 
+  displaying general information about the highlight like the resource class, name, and property 
+*/
 export default function HighlightPopup({ highlight }){
     const classes = useStyles();
     return ( 
