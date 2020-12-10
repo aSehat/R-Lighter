@@ -13,6 +13,7 @@ import Container from '@material-ui/core/Container';
 import { FormControl } from '@material-ui/core';
 import { FormHelperText } from '@material-ui/core';
 
+// styles for the content of the page
 const useStyles = makeStyles((theme) => ({
     paper: {
       marginTop: theme.spacing(8),
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+// sets user info, and sends the data to the API
 function Signup({history,...props}) {
     const styles = useStyles();
     const [state , setState] = useState({
@@ -38,6 +40,7 @@ function Signup({history,...props}) {
         confirmPassword: ""
     });
 
+    // changes name, email, password, and confirm password when user types in field
     const handleChange = (e) => {
         const {id , value} = e.target
         setState(prevState => ({
@@ -46,12 +49,14 @@ function Signup({history,...props}) {
         }))
     };
 
+    // does some error checking, sends info to API, and returns success or error message
     const sendDetailsToServer = () => {
         const payload={
             "name": state.name,
             "email": state.email,
             "password": state.password
         }
+        // redirects user to login page, so they have to login again after signing up
         const API_BASE_URL = "/api";
         axios.post(API_BASE_URL+'/users', payload)
             .then(function (response) {
@@ -77,6 +82,7 @@ function Signup({history,...props}) {
             });
     }
 
+    // basic error checkin gwhen form is submitted before form is sent to API
     const handleSubmitClick = (e) => {
         e.preventDefault();
         if (state.password === state.confirmPassword) {
@@ -97,6 +103,7 @@ function Signup({history,...props}) {
         }
     }
 
+    // actual content of the webpage
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
