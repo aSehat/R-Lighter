@@ -14,6 +14,7 @@ import { FormControl } from '@material-ui/core';
 import { FormHelperText } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 
+// adds styles to page content
 const useStyles = makeStyles((theme) => ({
     paper: {
       marginTop: theme.spacing(8),
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+// handles all login functionality
 function Login({history ,...props}) {
     const styles = useStyles();
 
@@ -38,6 +40,7 @@ function Login({history ,...props}) {
         password : ""
     });
 
+    // changes email and password to reflect form input
     const handleChange = (e) => {
         const {id , value} = e.target
         setState(prevState => ({
@@ -46,6 +49,8 @@ function Login({history ,...props}) {
         }))
     };
 
+    // sends email and password to API, does basic error checking, 
+        // assigns an authtoken, and assigns a success or error message
     const sendDetailsToServer = () => {
         const payload={
             "email": state.email,
@@ -77,6 +82,7 @@ function Login({history ,...props}) {
             });
     }
 
+    // does basic error checking before allowing email and password to be sent to API
     const handleSubmitClick = (e) => {
         e.preventDefault();
         if (state.email.length > 5 && state.password.length > 8) {
@@ -89,6 +95,7 @@ function Login({history ,...props}) {
         }
     }
 
+    // returns all of the content of the page
     return (
     <Container component="main" maxWidth="xs">
         <CssBaseline />
