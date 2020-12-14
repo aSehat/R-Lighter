@@ -54,7 +54,7 @@ export default function ProjectDialog(props) {
           </div>
           {(inputType === "Create") &&
           <div className = "field">
-            <TextField value={projectFields.link} onChange={(e) => changeFormValue(e, "link")} label="Project Link"  style={{ width: 333.89 }} variant="outlined" required={true}/>
+            <TextField value={projectFields.link} onChange={(e) => changeFormValue(e, "link")} label="PDF URL"  style={{ width: 333.89 }} variant="outlined" required={true}/>
           </div>
           }
           <div className = "field">
